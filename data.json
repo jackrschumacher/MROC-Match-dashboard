@@ -1,0 +1,3090 @@
+{
+    "event_key": "2026wilax",
+    "event_name": "",
+    "current_match": "2026wilax_f1m1",
+    "event_matches": {
+        "2026wilax_f1m1": {
+            "actual_time": 1775339251,
+            "alliances": {
+                "blue": {
+                    "dq_team_keys": [],
+                    "score": 334,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc5586",
+                        "frc1792",
+                        "frc1259"
+                    ]
+                },
+                "red": {
+                    "dq_team_keys": [],
+                    "score": 234,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc6732",
+                        "frc706",
+                        "frc8744"
+                    ]
+                }
+            },
+            "comp_level": "f",
+            "event_key": "2026wilax",
+            "key": "2026wilax_f1m1",
+            "match_number": 1,
+            "predicted_time": 1775338723,
+            "set_number": 1,
+            "time": 1775337840,
+            "winning_alliance": "blue"
+        },
+        "2026wilax_f1m2": {
+            "actual_time": 1775340778,
+            "alliances": {
+                "blue": {
+                    "dq_team_keys": [],
+                    "score": 264,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc5586",
+                        "frc1792",
+                        "frc1259"
+                    ]
+                },
+                "red": {
+                    "dq_team_keys": [],
+                    "score": 234,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc1716",
+                        "frc706",
+                        "frc8744"
+                    ]
+                }
+            },
+            "comp_level": "f",
+            "event_key": "2026wilax",
+            "key": "2026wilax_f1m2",
+            "match_number": 2,
+            "predicted_time": 1775340409,
+            "set_number": 1,
+            "time": 1775339100,
+            "winning_alliance": "blue"
+        },
+        "2026wilax_qm1": {
+            "actual_time": 1775232014,
+            "alliances": {
+                "blue": {
+                    "dq_team_keys": [],
+                    "score": 49,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc5903",
+                        "frc2143",
+                        "frc8782"
+                    ]
+                },
+                "red": {
+                    "dq_team_keys": [],
+                    "score": 86,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc2826",
+                        "frc4021",
+                        "frc11258"
+                    ]
+                }
+            },
+            "comp_level": "qm",
+            "event_key": "2026wilax",
+            "key": "2026wilax_qm1",
+            "match_number": 1,
+            "predicted_time": 1775232000,
+            "set_number": 1,
+            "time": 1775232000,
+            "winning_alliance": "red"
+        },
+        "2026wilax_qm10": {
+            "actual_time": 1775236834,
+            "alliances": {
+                "blue": {
+                    "dq_team_keys": [],
+                    "score": 142,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc9149",
+                        "frc4021",
+                        "frc135"
+                    ]
+                },
+                "red": {
+                    "dq_team_keys": [],
+                    "score": 55,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc8700",
+                        "frc9578",
+                        "frc1716"
+                    ]
+                }
+            },
+            "comp_level": "qm",
+            "event_key": "2026wilax",
+            "key": "2026wilax_qm10",
+            "match_number": 10,
+            "predicted_time": 1775236868,
+            "set_number": 1,
+            "time": 1775236800,
+            "winning_alliance": "blue"
+        },
+        "2026wilax_qm11": {
+            "actual_time": 1775237324,
+            "alliances": {
+                "blue": {
+                    "dq_team_keys": [],
+                    "score": 55,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc5586",
+                        "frc11158",
+                        "frc2826"
+                    ]
+                },
+                "red": {
+                    "dq_team_keys": [],
+                    "score": 167,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc5019",
+                        "frc3418",
+                        "frc1792"
+                    ]
+                }
+            },
+            "comp_level": "qm",
+            "event_key": "2026wilax",
+            "key": "2026wilax_qm11",
+            "match_number": 11,
+            "predicted_time": 1775237362,
+            "set_number": 1,
+            "time": 1775237310,
+            "winning_alliance": "red"
+        },
+        "2026wilax_qm12": {
+            "actual_time": 1775237839,
+            "alliances": {
+                "blue": {
+                    "dq_team_keys": [],
+                    "score": 126,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc8782",
+                        "frc4531",
+                        "frc7619"
+                    ]
+                },
+                "red": {
+                    "dq_team_keys": [],
+                    "score": 308,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc930",
+                        "frc11139",
+                        "frc6574"
+                    ]
+                }
+            },
+            "comp_level": "qm",
+            "event_key": "2026wilax",
+            "key": "2026wilax_qm12",
+            "match_number": 12,
+            "predicted_time": 1775237861,
+            "set_number": 1,
+            "time": 1775237820,
+            "winning_alliance": "red"
+        },
+        "2026wilax_qm13": {
+            "actual_time": 1775238474,
+            "alliances": {
+                "blue": {
+                    "dq_team_keys": [],
+                    "score": 232,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc6732",
+                        "frc135",
+                        "frc2194"
+                    ]
+                },
+                "red": {
+                    "dq_team_keys": [],
+                    "score": 230,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc8744",
+                        "frc706",
+                        "frc9149"
+                    ]
+                }
+            },
+            "comp_level": "qm",
+            "event_key": "2026wilax",
+            "key": "2026wilax_qm13",
+            "match_number": 13,
+            "predicted_time": 1775238367,
+            "set_number": 1,
+            "time": 1775238330,
+            "winning_alliance": "blue"
+        },
+        "2026wilax_qm14": {
+            "actual_time": 1775239017,
+            "alliances": {
+                "blue": {
+                    "dq_team_keys": [],
+                    "score": 35,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc3381",
+                        "frc8024",
+                        "frc6166"
+                    ]
+                },
+                "red": {
+                    "dq_team_keys": [],
+                    "score": 265,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc1792",
+                        "frc9578",
+                        "frc2826"
+                    ]
+                }
+            },
+            "comp_level": "qm",
+            "event_key": "2026wilax",
+            "key": "2026wilax_qm14",
+            "match_number": 14,
+            "predicted_time": 1775239604,
+            "set_number": 1,
+            "time": 1775238840,
+            "winning_alliance": "red"
+        },
+        "2026wilax_qm15": {
+            "actual_time": 1775242941,
+            "alliances": {
+                "blue": {
+                    "dq_team_keys": [],
+                    "score": 91,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc5903",
+                        "frc3692",
+                        "frc4054"
+                    ]
+                },
+                "red": {
+                    "dq_team_keys": [],
+                    "score": 309,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc1259",
+                        "frc8782",
+                        "frc5586"
+                    ]
+                }
+            },
+            "comp_level": "qm",
+            "event_key": "2026wilax",
+            "key": "2026wilax_qm15",
+            "match_number": 15,
+            "predicted_time": 1775242957,
+            "set_number": 1,
+            "time": 1775242830,
+            "winning_alliance": "red"
+        },
+        "2026wilax_qm16": {
+            "actual_time": 1775243484,
+            "alliances": {
+                "blue": {
+                    "dq_team_keys": [],
+                    "score": 66,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc11258",
+                        "frc3418",
+                        "frc2143"
+                    ]
+                },
+                "red": {
+                    "dq_team_keys": [],
+                    "score": 141,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc4021",
+                        "frc5019",
+                        "frc10264"
+                    ]
+                }
+            },
+            "comp_level": "qm",
+            "event_key": "2026wilax",
+            "key": "2026wilax_qm16",
+            "match_number": 16,
+            "predicted_time": 1775243546,
+            "set_number": 1,
+            "time": 1775243340,
+            "winning_alliance": "red"
+        },
+        "2026wilax_qm17": {
+            "actual_time": 1775243996,
+            "alliances": {
+                "blue": {
+                    "dq_team_keys": [],
+                    "score": 162,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc1716",
+                        "frc171",
+                        "frc5826"
+                    ]
+                },
+                "red": {
+                    "dq_team_keys": [],
+                    "score": 166,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc11158",
+                        "frc930",
+                        "frc8700"
+                    ]
+                }
+            },
+            "comp_level": "qm",
+            "event_key": "2026wilax",
+            "key": "2026wilax_qm17",
+            "match_number": 17,
+            "predicted_time": 1775244009,
+            "set_number": 1,
+            "time": 1775243850,
+            "winning_alliance": "red"
+        },
+        "2026wilax_qm18": {
+            "actual_time": 1775244486,
+            "alliances": {
+                "blue": {
+                    "dq_team_keys": [],
+                    "score": 199,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc6574",
+                        "frc2194",
+                        "frc2826"
+                    ]
+                },
+                "red": {
+                    "dq_team_keys": [],
+                    "score": 150,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc11139",
+                        "frc8024",
+                        "frc706"
+                    ]
+                }
+            },
+            "comp_level": "qm",
+            "event_key": "2026wilax",
+            "key": "2026wilax_qm18",
+            "match_number": 18,
+            "predicted_time": 1775244660,
+            "set_number": 1,
+            "time": 1775244360,
+            "winning_alliance": "blue"
+        },
+        "2026wilax_qm19": {
+            "actual_time": 1775245007,
+            "alliances": {
+                "blue": {
+                    "dq_team_keys": [],
+                    "score": 194,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc3692",
+                        "frc10264",
+                        "frc4531"
+                    ]
+                },
+                "red": {
+                    "dq_team_keys": [],
+                    "score": 105,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc9578",
+                        "frc9149",
+                        "frc6166"
+                    ]
+                }
+            },
+            "comp_level": "qm",
+            "event_key": "2026wilax",
+            "key": "2026wilax_qm19",
+            "match_number": 19,
+            "predicted_time": 1775245025,
+            "set_number": 1,
+            "time": 1775244870,
+            "winning_alliance": "blue"
+        },
+        "2026wilax_qm2": {
+            "actual_time": 1775232749,
+            "alliances": {
+                "blue": {
+                    "dq_team_keys": [],
+                    "score": 61,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc9149",
+                        "frc8024",
+                        "frc6732"
+                    ]
+                },
+                "red": {
+                    "dq_team_keys": [],
+                    "score": 138,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc6574",
+                        "frc4054",
+                        "frc6166"
+                    ]
+                }
+            },
+            "comp_level": "qm",
+            "event_key": "2026wilax",
+            "key": "2026wilax_qm2",
+            "match_number": 2,
+            "predicted_time": 1775232540,
+            "set_number": 1,
+            "time": 1775232540,
+            "winning_alliance": "red"
+        },
+        "2026wilax_qm20": {
+            "actual_time": 1775245530,
+            "alliances": {
+                "blue": {
+                    "dq_team_keys": [],
+                    "score": 129,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc171",
+                        "frc5019",
+                        "frc11158"
+                    ]
+                },
+                "red": {
+                    "dq_team_keys": [],
+                    "score": 165,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc135",
+                        "frc5903",
+                        "frc7619"
+                    ]
+                }
+            },
+            "comp_level": "qm",
+            "event_key": "2026wilax",
+            "key": "2026wilax_qm20",
+            "match_number": 20,
+            "predicted_time": 1775245539,
+            "set_number": 1,
+            "time": 1775245380,
+            "winning_alliance": "red"
+        },
+        "2026wilax_qm21": {
+            "actual_time": 1775246289,
+            "alliances": {
+                "blue": {
+                    "dq_team_keys": [],
+                    "score": 136,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc2143",
+                        "frc930",
+                        "frc1792"
+                    ]
+                },
+                "red": {
+                    "dq_team_keys": [],
+                    "score": 176,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc1259",
+                        "frc4054",
+                        "frc3418"
+                    ]
+                }
+            },
+            "comp_level": "qm",
+            "event_key": "2026wilax",
+            "key": "2026wilax_qm21",
+            "match_number": 21,
+            "predicted_time": 1775246102,
+            "set_number": 1,
+            "time": 1775245890,
+            "winning_alliance": "red"
+        },
+        "2026wilax_qm22": {
+            "actual_time": 1775246839,
+            "alliances": {
+                "blue": {
+                    "dq_team_keys": [],
+                    "score": 119,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc5586",
+                        "frc8744",
+                        "frc6732"
+                    ]
+                },
+                "red": {
+                    "dq_team_keys": [],
+                    "score": 84,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc4021",
+                        "frc3381",
+                        "frc5826"
+                    ]
+                }
+            },
+            "comp_level": "qm",
+            "event_key": "2026wilax",
+            "key": "2026wilax_qm22",
+            "match_number": 22,
+            "predicted_time": 1775246818,
+            "set_number": 1,
+            "time": 1775246400,
+            "winning_alliance": "blue"
+        },
+        "2026wilax_qm23": {
+            "actual_time": 1775247345,
+            "alliances": {
+                "blue": {
+                    "dq_team_keys": [],
+                    "score": 40,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc11258",
+                        "frc8700",
+                        "frc8024"
+                    ]
+                },
+                "red": {
+                    "dq_team_keys": [],
+                    "score": 96,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc8782",
+                        "frc1716",
+                        "frc5019"
+                    ]
+                }
+            },
+            "comp_level": "qm",
+            "event_key": "2026wilax",
+            "key": "2026wilax_qm23",
+            "match_number": 23,
+            "predicted_time": 1775247367,
+            "set_number": 1,
+            "time": 1775246880,
+            "winning_alliance": "red"
+        },
+        "2026wilax_qm24": {
+            "actual_time": 1775247928,
+            "alliances": {
+                "blue": {
+                    "dq_team_keys": [],
+                    "score": 31,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc3418",
+                        "frc6574",
+                        "frc5903"
+                    ]
+                },
+                "red": {
+                    "dq_team_keys": [],
+                    "score": 154,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc171",
+                        "frc3692",
+                        "frc9149"
+                    ]
+                }
+            },
+            "comp_level": "qm",
+            "event_key": "2026wilax",
+            "key": "2026wilax_qm24",
+            "match_number": 24,
+            "predicted_time": 1775247895,
+            "set_number": 1,
+            "time": 1775247360,
+            "winning_alliance": "red"
+        },
+        "2026wilax_qm25": {
+            "actual_time": 1775248447,
+            "alliances": {
+                "blue": {
+                    "dq_team_keys": [],
+                    "score": 138,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc4021",
+                        "frc8744",
+                        "frc4531"
+                    ]
+                },
+                "red": {
+                    "dq_team_keys": [],
+                    "score": 39,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc3381",
+                        "frc4054",
+                        "frc11158"
+                    ]
+                }
+            },
+            "comp_level": "qm",
+            "event_key": "2026wilax",
+            "key": "2026wilax_qm25",
+            "match_number": 25,
+            "predicted_time": 1775248474,
+            "set_number": 1,
+            "time": 1775247840,
+            "winning_alliance": "blue"
+        },
+        "2026wilax_qm26": {
+            "actual_time": 1775248965,
+            "alliances": {
+                "blue": {
+                    "dq_team_keys": [],
+                    "score": 200,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc8782",
+                        "frc1792",
+                        "frc8700"
+                    ]
+                },
+                "red": {
+                    "dq_team_keys": [],
+                    "score": 124,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc135",
+                        "frc6166",
+                        "frc5826"
+                    ]
+                }
+            },
+            "comp_level": "qm",
+            "event_key": "2026wilax",
+            "key": "2026wilax_qm26",
+            "match_number": 26,
+            "predicted_time": 1775249026,
+            "set_number": 1,
+            "time": 1775248320,
+            "winning_alliance": "blue"
+        },
+        "2026wilax_qm27": {
+            "actual_time": 1775249451,
+            "alliances": {
+                "blue": {
+                    "dq_team_keys": [],
+                    "score": 170,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc11139",
+                        "frc7619",
+                        "frc1259"
+                    ]
+                },
+                "red": {
+                    "dq_team_keys": [],
+                    "score": 107,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc6732",
+                        "frc9578",
+                        "frc10264"
+                    ]
+                }
+            },
+            "comp_level": "qm",
+            "event_key": "2026wilax",
+            "key": "2026wilax_qm27",
+            "match_number": 27,
+            "predicted_time": 1775249498,
+            "set_number": 1,
+            "time": 1775248800,
+            "winning_alliance": "blue"
+        },
+        "2026wilax_qm28": {
+            "actual_time": 1775249998,
+            "alliances": {
+                "blue": {
+                    "dq_team_keys": [],
+                    "score": 119,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc2143",
+                        "frc2826",
+                        "frc1716"
+                    ]
+                },
+                "red": {
+                    "dq_team_keys": [],
+                    "score": 118,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc5586",
+                        "frc2194",
+                        "frc11258"
+                    ]
+                }
+            },
+            "comp_level": "qm",
+            "event_key": "2026wilax",
+            "key": "2026wilax_qm28",
+            "match_number": 28,
+            "predicted_time": 1775250376,
+            "set_number": 1,
+            "time": 1775249280,
+            "winning_alliance": "blue"
+        },
+        "2026wilax_qm29": {
+            "actual_time": 1775251216,
+            "alliances": {
+                "blue": {
+                    "dq_team_keys": [],
+                    "score": 118,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc6166",
+                        "frc930",
+                        "frc3418"
+                    ]
+                },
+                "red": {
+                    "dq_team_keys": [],
+                    "score": 255,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc706",
+                        "frc6574",
+                        "frc4021"
+                    ]
+                }
+            },
+            "comp_level": "qm",
+            "event_key": "2026wilax",
+            "key": "2026wilax_qm29",
+            "match_number": 29,
+            "predicted_time": 1775251205,
+            "set_number": 1,
+            "time": 1775250900,
+            "winning_alliance": "red"
+        },
+        "2026wilax_qm3": {
+            "actual_time": 1775233290,
+            "alliances": {
+                "blue": {
+                    "dq_team_keys": [],
+                    "score": 312,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc1259",
+                        "frc706",
+                        "frc9578"
+                    ]
+                },
+                "red": {
+                    "dq_team_keys": [],
+                    "score": 280,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc8744",
+                        "frc171",
+                        "frc930"
+                    ]
+                }
+            },
+            "comp_level": "qm",
+            "event_key": "2026wilax",
+            "key": "2026wilax_qm3",
+            "match_number": 3,
+            "predicted_time": 1775233324,
+            "set_number": 1,
+            "time": 1775233080,
+            "winning_alliance": "blue"
+        },
+        "2026wilax_qm30": {
+            "actual_time": 1775251709,
+            "alliances": {
+                "blue": {
+                    "dq_team_keys": [],
+                    "score": 48,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc9578",
+                        "frc8782",
+                        "frc8024"
+                    ]
+                },
+                "red": {
+                    "dq_team_keys": [],
+                    "score": 119,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc5826",
+                        "frc6732",
+                        "frc11158"
+                    ]
+                }
+            },
+            "comp_level": "qm",
+            "event_key": "2026wilax",
+            "key": "2026wilax_qm30",
+            "match_number": 30,
+            "predicted_time": 1775251745,
+            "set_number": 1,
+            "time": 1775251380,
+            "winning_alliance": "red"
+        },
+        "2026wilax_qm31": {
+            "actual_time": 1775252207,
+            "alliances": {
+                "blue": {
+                    "dq_team_keys": [],
+                    "score": 313,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc171",
+                        "frc7619",
+                        "frc2194"
+                    ]
+                },
+                "red": {
+                    "dq_team_keys": [],
+                    "score": 107,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc2826",
+                        "frc4054",
+                        "frc4531"
+                    ]
+                }
+            },
+            "comp_level": "qm",
+            "event_key": "2026wilax",
+            "key": "2026wilax_qm31",
+            "match_number": 31,
+            "predicted_time": 1775252231,
+            "set_number": 1,
+            "time": 1775251890,
+            "winning_alliance": "blue"
+        },
+        "2026wilax_qm32": {
+            "actual_time": 1775253056,
+            "alliances": {
+                "blue": {
+                    "dq_team_keys": [],
+                    "score": 171,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc8744",
+                        "frc11139",
+                        "frc8700"
+                    ]
+                },
+                "red": {
+                    "dq_team_keys": [],
+                    "score": 246,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc1792",
+                        "frc1716",
+                        "frc5903"
+                    ]
+                }
+            },
+            "comp_level": "qm",
+            "event_key": "2026wilax",
+            "key": "2026wilax_qm32",
+            "match_number": 32,
+            "predicted_time": 1775252745,
+            "set_number": 1,
+            "time": 1775252400,
+            "winning_alliance": "red"
+        },
+        "2026wilax_qm33": {
+            "actual_time": 1775253622,
+            "alliances": {
+                "blue": {
+                    "dq_team_keys": [],
+                    "score": 113,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc2143",
+                        "frc5586",
+                        "frc135"
+                    ]
+                },
+                "red": {
+                    "dq_team_keys": [],
+                    "score": 228,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc10264",
+                        "frc9149",
+                        "frc930"
+                    ]
+                }
+            },
+            "comp_level": "qm",
+            "event_key": "2026wilax",
+            "key": "2026wilax_qm33",
+            "match_number": 33,
+            "predicted_time": 1775253585,
+            "set_number": 1,
+            "time": 1775252910,
+            "winning_alliance": "red"
+        },
+        "2026wilax_qm34": {
+            "actual_time": 1775254149,
+            "alliances": {
+                "blue": {
+                    "dq_team_keys": [],
+                    "score": 275,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc3692",
+                        "frc1259",
+                        "frc3381"
+                    ]
+                },
+                "red": {
+                    "dq_team_keys": [],
+                    "score": 106,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc11258",
+                        "frc706",
+                        "frc5019"
+                    ]
+                }
+            },
+            "comp_level": "qm",
+            "event_key": "2026wilax",
+            "key": "2026wilax_qm34",
+            "match_number": 34,
+            "predicted_time": 1775254142,
+            "set_number": 1,
+            "time": 1775253420,
+            "winning_alliance": "blue"
+        },
+        "2026wilax_qm35": {
+            "actual_time": 1775254633,
+            "alliances": {
+                "blue": {
+                    "dq_team_keys": [],
+                    "score": 264,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc8744",
+                        "frc5826",
+                        "frc9578"
+                    ]
+                },
+                "red": {
+                    "dq_team_keys": [],
+                    "score": 89,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc2826",
+                        "frc3418",
+                        "frc7619"
+                    ]
+                }
+            },
+            "comp_level": "qm",
+            "event_key": "2026wilax",
+            "key": "2026wilax_qm35",
+            "match_number": 35,
+            "predicted_time": 1775254659,
+            "set_number": 1,
+            "time": 1775253930,
+            "winning_alliance": "blue"
+        },
+        "2026wilax_qm36": {
+            "actual_time": 1775255092,
+            "alliances": {
+                "blue": {
+                    "dq_team_keys": [],
+                    "score": 203,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc4054",
+                        "frc1792",
+                        "frc11139"
+                    ]
+                },
+                "red": {
+                    "dq_team_keys": [],
+                    "score": 51,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc4021",
+                        "frc2143",
+                        "frc8024"
+                    ]
+                }
+            },
+            "comp_level": "qm",
+            "event_key": "2026wilax",
+            "key": "2026wilax_qm36",
+            "match_number": 36,
+            "predicted_time": 1775255181,
+            "set_number": 1,
+            "time": 1775254440,
+            "winning_alliance": "blue"
+        },
+        "2026wilax_qm37": {
+            "actual_time": 1775255649,
+            "alliances": {
+                "blue": {
+                    "dq_team_keys": [],
+                    "score": 176,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc11158",
+                        "frc9149",
+                        "frc6574"
+                    ]
+                },
+                "red": {
+                    "dq_team_keys": [],
+                    "score": 56,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc135",
+                        "frc11258",
+                        "frc3692"
+                    ]
+                }
+            },
+            "comp_level": "qm",
+            "event_key": "2026wilax",
+            "key": "2026wilax_qm37",
+            "match_number": 37,
+            "predicted_time": 1775255597,
+            "set_number": 1,
+            "time": 1775254950,
+            "winning_alliance": "blue"
+        },
+        "2026wilax_qm38": {
+            "actual_time": 1775256151,
+            "alliances": {
+                "blue": {
+                    "dq_team_keys": [],
+                    "score": 194,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc3381",
+                        "frc8782",
+                        "frc2194"
+                    ]
+                },
+                "red": {
+                    "dq_team_keys": [],
+                    "score": 226,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc6166",
+                        "frc1259",
+                        "frc171"
+                    ]
+                }
+            },
+            "comp_level": "qm",
+            "event_key": "2026wilax",
+            "key": "2026wilax_qm38",
+            "match_number": 38,
+            "predicted_time": 1775256174,
+            "set_number": 1,
+            "time": 1775255460,
+            "winning_alliance": "red"
+        },
+        "2026wilax_qm39": {
+            "actual_time": 1775256619,
+            "alliances": {
+                "blue": {
+                    "dq_team_keys": [],
+                    "score": 220,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc6732",
+                        "frc8700",
+                        "frc706"
+                    ]
+                },
+                "red": {
+                    "dq_team_keys": [],
+                    "score": 181,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc5019",
+                        "frc4531",
+                        "frc5586"
+                    ]
+                }
+            },
+            "comp_level": "qm",
+            "event_key": "2026wilax",
+            "key": "2026wilax_qm39",
+            "match_number": 39,
+            "predicted_time": 1775256659,
+            "set_number": 1,
+            "time": 1775255970,
+            "winning_alliance": "blue"
+        },
+        "2026wilax_qm4": {
+            "actual_time": 1775233786,
+            "alliances": {
+                "blue": {
+                    "dq_team_keys": [],
+                    "score": 60,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc3692",
+                        "frc5586",
+                        "frc3418"
+                    ]
+                },
+                "red": {
+                    "dq_team_keys": [],
+                    "score": 202,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc2194",
+                        "frc5826",
+                        "frc11139"
+                    ]
+                }
+            },
+            "comp_level": "qm",
+            "event_key": "2026wilax",
+            "key": "2026wilax_qm4",
+            "match_number": 4,
+            "predicted_time": 1775233816,
+            "set_number": 1,
+            "time": 1775233620,
+            "winning_alliance": "red"
+        },
+        "2026wilax_qm40": {
+            "actual_time": 1775257057,
+            "alliances": {
+                "blue": {
+                    "dq_team_keys": [],
+                    "score": 31,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc930",
+                        "frc1716",
+                        "frc4021"
+                    ]
+                },
+                "red": {
+                    "dq_team_keys": [],
+                    "score": 251,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc10264",
+                        "frc5903",
+                        "frc8744"
+                    ]
+                }
+            },
+            "comp_level": "qm",
+            "event_key": "2026wilax",
+            "key": "2026wilax_qm40",
+            "match_number": 40,
+            "predicted_time": 1775257242,
+            "set_number": 1,
+            "time": 1775256480,
+            "winning_alliance": "red"
+        },
+        "2026wilax_qm41": {
+            "actual_time": 1775257575,
+            "alliances": {
+                "blue": {
+                    "dq_team_keys": [],
+                    "score": 227,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc3381",
+                        "frc135",
+                        "frc1792"
+                    ]
+                },
+                "red": {
+                    "dq_team_keys": [],
+                    "score": 92,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc3692",
+                        "frc2826",
+                        "frc8782"
+                    ]
+                }
+            },
+            "comp_level": "qm",
+            "event_key": "2026wilax",
+            "key": "2026wilax_qm41",
+            "match_number": 41,
+            "predicted_time": 1775257561,
+            "set_number": 1,
+            "time": 1775256990,
+            "winning_alliance": "blue"
+        },
+        "2026wilax_qm42": {
+            "actual_time": 1775258028,
+            "alliances": {
+                "blue": {
+                    "dq_team_keys": [],
+                    "score": 95,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc11139",
+                        "frc9149",
+                        "frc5586"
+                    ]
+                },
+                "red": {
+                    "dq_team_keys": [],
+                    "score": 91,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc8700",
+                        "frc171",
+                        "frc4054"
+                    ]
+                }
+            },
+            "comp_level": "qm",
+            "event_key": "2026wilax",
+            "key": "2026wilax_qm42",
+            "match_number": 42,
+            "predicted_time": 1775258248,
+            "set_number": 1,
+            "time": 1775257500,
+            "winning_alliance": "blue"
+        },
+        "2026wilax_qm43": {
+            "actual_time": 1775258502,
+            "alliances": {
+                "blue": {
+                    "dq_team_keys": [],
+                    "score": 121,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc10264",
+                        "frc1259",
+                        "frc6574"
+                    ]
+                },
+                "red": {
+                    "dq_team_keys": [],
+                    "score": 96,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc7619",
+                        "frc11158",
+                        "frc8024"
+                    ]
+                }
+            },
+            "comp_level": "qm",
+            "event_key": "2026wilax",
+            "key": "2026wilax_qm43",
+            "match_number": 43,
+            "predicted_time": 1775258537,
+            "set_number": 1,
+            "time": 1775258010,
+            "winning_alliance": "blue"
+        },
+        "2026wilax_qm44": {
+            "actual_time": 1775258978,
+            "alliances": {
+                "blue": {
+                    "dq_team_keys": [],
+                    "score": 213,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc5826",
+                        "frc5019",
+                        "frc930"
+                    ]
+                },
+                "red": {
+                    "dq_team_keys": [],
+                    "score": 138,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc6166",
+                        "frc2143",
+                        "frc4531"
+                    ]
+                }
+            },
+            "comp_level": "qm",
+            "event_key": "2026wilax",
+            "key": "2026wilax_qm44",
+            "match_number": 44,
+            "predicted_time": 1775259031,
+            "set_number": 1,
+            "time": 1775258520,
+            "winning_alliance": "blue"
+        },
+        "2026wilax_qm45": {
+            "actual_time": 1775259504,
+            "alliances": {
+                "blue": {
+                    "dq_team_keys": [],
+                    "score": 60,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc5903",
+                        "frc6732",
+                        "frc11258"
+                    ]
+                },
+                "red": {
+                    "dq_team_keys": [],
+                    "score": 189,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc2194",
+                        "frc1716",
+                        "frc3418"
+                    ]
+                }
+            },
+            "comp_level": "qm",
+            "event_key": "2026wilax",
+            "key": "2026wilax_qm45",
+            "match_number": 45,
+            "predicted_time": 1775259484,
+            "set_number": 1,
+            "time": 1775259030,
+            "winning_alliance": "red"
+        },
+        "2026wilax_qm46": {
+            "actual_time": 1775260066,
+            "alliances": {
+                "blue": {
+                    "dq_team_keys": [],
+                    "score": 180,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc9578",
+                        "frc171",
+                        "frc4021"
+                    ]
+                },
+                "red": {
+                    "dq_team_keys": [],
+                    "score": 142,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc706",
+                        "frc10264",
+                        "frc8782"
+                    ]
+                }
+            },
+            "comp_level": "qm",
+            "event_key": "2026wilax",
+            "key": "2026wilax_qm46",
+            "match_number": 46,
+            "predicted_time": 1775260015,
+            "set_number": 1,
+            "time": 1775259540,
+            "winning_alliance": "blue"
+        },
+        "2026wilax_qm47": {
+            "actual_time": 1775260573,
+            "alliances": {
+                "blue": {
+                    "dq_team_keys": [],
+                    "score": 67,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc8700",
+                        "frc2826",
+                        "frc9149"
+                    ]
+                },
+                "red": {
+                    "dq_team_keys": [],
+                    "score": 171,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc930",
+                        "frc5586",
+                        "frc3381"
+                    ]
+                }
+            },
+            "comp_level": "qm",
+            "event_key": "2026wilax",
+            "key": "2026wilax_qm47",
+            "match_number": 47,
+            "predicted_time": 1775260595,
+            "set_number": 1,
+            "time": 1775260050,
+            "winning_alliance": "red"
+        },
+        "2026wilax_qm48": {
+            "actual_time": 1775261073,
+            "alliances": {
+                "blue": {
+                    "dq_team_keys": [],
+                    "score": 99,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc11139",
+                        "frc3418",
+                        "frc135"
+                    ]
+                },
+                "red": {
+                    "dq_team_keys": [],
+                    "score": 173,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc8024",
+                        "frc1259",
+                        "frc5019"
+                    ]
+                }
+            },
+            "comp_level": "qm",
+            "event_key": "2026wilax",
+            "key": "2026wilax_qm48",
+            "match_number": 48,
+            "predicted_time": 1775261097,
+            "set_number": 1,
+            "time": 1775260560,
+            "winning_alliance": "red"
+        },
+        "2026wilax_qm49": {
+            "actual_time": 1775312757,
+            "alliances": {
+                "blue": {
+                    "dq_team_keys": [],
+                    "score": 148,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc5826",
+                        "frc11258",
+                        "frc7619"
+                    ]
+                },
+                "red": {
+                    "dq_team_keys": [],
+                    "score": 184,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc706",
+                        "frc5903",
+                        "frc6166"
+                    ]
+                }
+            },
+            "comp_level": "qm",
+            "event_key": "2026wilax",
+            "key": "2026wilax_qm49",
+            "match_number": 49,
+            "predicted_time": 1775313000,
+            "set_number": 1,
+            "time": 1775313000,
+            "winning_alliance": "red"
+        },
+        "2026wilax_qm5": {
+            "actual_time": 1775234300,
+            "alliances": {
+                "blue": {
+                    "dq_team_keys": [],
+                    "score": 227,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc4531",
+                        "frc11158",
+                        "frc1792"
+                    ]
+                },
+                "red": {
+                    "dq_team_keys": [],
+                    "score": 195,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc1716",
+                        "frc135",
+                        "frc10264"
+                    ]
+                }
+            },
+            "comp_level": "qm",
+            "event_key": "2026wilax",
+            "key": "2026wilax_qm5",
+            "match_number": 5,
+            "predicted_time": 1775234313,
+            "set_number": 1,
+            "time": 1775234160,
+            "winning_alliance": "blue"
+        },
+        "2026wilax_qm50": {
+            "actual_time": 1775313250,
+            "alliances": {
+                "blue": {
+                    "dq_team_keys": [],
+                    "score": 143,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc4531",
+                        "frc2194",
+                        "frc9578"
+                    ]
+                },
+                "red": {
+                    "dq_team_keys": [],
+                    "score": 249,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc6574",
+                        "frc1792",
+                        "frc8744"
+                    ]
+                }
+            },
+            "comp_level": "qm",
+            "event_key": "2026wilax",
+            "key": "2026wilax_qm50",
+            "match_number": 50,
+            "predicted_time": 1775313540,
+            "set_number": 1,
+            "time": 1775313540,
+            "winning_alliance": "red"
+        },
+        "2026wilax_qm51": {
+            "actual_time": 1775314073,
+            "alliances": {
+                "blue": {
+                    "dq_team_keys": [],
+                    "score": 18,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc1716",
+                        "frc11158",
+                        "frc3692"
+                    ]
+                },
+                "red": {
+                    "dq_team_keys": [],
+                    "score": 138,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc4054",
+                        "frc2143",
+                        "frc6732"
+                    ]
+                }
+            },
+            "comp_level": "qm",
+            "event_key": "2026wilax",
+            "key": "2026wilax_qm51",
+            "match_number": 51,
+            "predicted_time": 1775313872,
+            "set_number": 1,
+            "time": 1775314080,
+            "winning_alliance": "red"
+        },
+        "2026wilax_qm52": {
+            "actual_time": 1775314546,
+            "alliances": {
+                "blue": {
+                    "dq_team_keys": [],
+                    "score": 42,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc9149",
+                        "frc5019",
+                        "frc5903"
+                    ]
+                },
+                "red": {
+                    "dq_team_keys": [],
+                    "score": 85,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc2826",
+                        "frc3381",
+                        "frc11139"
+                    ]
+                }
+            },
+            "comp_level": "qm",
+            "event_key": "2026wilax",
+            "key": "2026wilax_qm52",
+            "match_number": 52,
+            "predicted_time": 1775314576,
+            "set_number": 1,
+            "time": 1775314620,
+            "winning_alliance": "red"
+        },
+        "2026wilax_qm53": {
+            "actual_time": 1775315039,
+            "alliances": {
+                "blue": {
+                    "dq_team_keys": [],
+                    "score": 192,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc3418",
+                        "frc706",
+                        "frc171"
+                    ]
+                },
+                "red": {
+                    "dq_team_keys": [],
+                    "score": 106,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc8024",
+                        "frc4531",
+                        "frc135"
+                    ]
+                }
+            },
+            "comp_level": "qm",
+            "event_key": "2026wilax",
+            "key": "2026wilax_qm53",
+            "match_number": 53,
+            "predicted_time": 1775315051,
+            "set_number": 1,
+            "time": 1775315160,
+            "winning_alliance": "blue"
+        },
+        "2026wilax_qm54": {
+            "actual_time": 1775315607,
+            "alliances": {
+                "blue": {
+                    "dq_team_keys": [],
+                    "score": 182,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc9578",
+                        "frc930",
+                        "frc4054"
+                    ]
+                },
+                "red": {
+                    "dq_team_keys": [],
+                    "score": 53,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc6732",
+                        "frc4021",
+                        "frc3692"
+                    ]
+                }
+            },
+            "comp_level": "qm",
+            "event_key": "2026wilax",
+            "key": "2026wilax_qm54",
+            "match_number": 54,
+            "predicted_time": 1775315565,
+            "set_number": 1,
+            "time": 1775315700,
+            "winning_alliance": "blue"
+        },
+        "2026wilax_qm55": {
+            "actual_time": 1775316106,
+            "alliances": {
+                "blue": {
+                    "dq_team_keys": [],
+                    "score": 92,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc11258",
+                        "frc6166",
+                        "frc1716"
+                    ]
+                },
+                "red": {
+                    "dq_team_keys": [],
+                    "score": 80,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc1792",
+                        "frc7619",
+                        "frc5586"
+                    ]
+                }
+            },
+            "comp_level": "qm",
+            "event_key": "2026wilax",
+            "key": "2026wilax_qm55",
+            "match_number": 55,
+            "predicted_time": 1775316111,
+            "set_number": 1,
+            "time": 1775316240,
+            "winning_alliance": "blue"
+        },
+        "2026wilax_qm56": {
+            "actual_time": 1775316578,
+            "alliances": {
+                "blue": {
+                    "dq_team_keys": [],
+                    "score": 220,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc2194",
+                        "frc10264",
+                        "frc2143"
+                    ]
+                },
+                "red": {
+                    "dq_team_keys": [],
+                    "score": 246,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc1259",
+                        "frc5826",
+                        "frc8700"
+                    ]
+                }
+            },
+            "comp_level": "qm",
+            "event_key": "2026wilax",
+            "key": "2026wilax_qm56",
+            "match_number": 56,
+            "predicted_time": 1775316624,
+            "set_number": 1,
+            "time": 1775316750,
+            "winning_alliance": "red"
+        },
+        "2026wilax_qm57": {
+            "actual_time": 1775317055,
+            "alliances": {
+                "blue": {
+                    "dq_team_keys": [],
+                    "score": 145,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc8782",
+                        "frc6574",
+                        "frc6732"
+                    ]
+                },
+                "red": {
+                    "dq_team_keys": [],
+                    "score": 138,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc3418",
+                        "frc8744",
+                        "frc11158"
+                    ]
+                }
+            },
+            "comp_level": "qm",
+            "event_key": "2026wilax",
+            "key": "2026wilax_qm57",
+            "match_number": 57,
+            "predicted_time": 1775317085,
+            "set_number": 1,
+            "time": 1775317260,
+            "winning_alliance": "blue"
+        },
+        "2026wilax_qm58": {
+            "actual_time": 1775317529,
+            "alliances": {
+                "blue": {
+                    "dq_team_keys": [],
+                    "score": 150,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc1716",
+                        "frc7619",
+                        "frc706"
+                    ]
+                },
+                "red": {
+                    "dq_team_keys": [],
+                    "score": 40,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc5019",
+                        "frc11139",
+                        "frc3692"
+                    ]
+                }
+            },
+            "comp_level": "qm",
+            "event_key": "2026wilax",
+            "key": "2026wilax_qm58",
+            "match_number": 58,
+            "predicted_time": 1775317559,
+            "set_number": 1,
+            "time": 1775317770,
+            "winning_alliance": "blue"
+        },
+        "2026wilax_qm59": {
+            "actual_time": 1775318084,
+            "alliances": {
+                "blue": {
+                    "dq_team_keys": [],
+                    "score": 43,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc8700",
+                        "frc6166",
+                        "frc10264"
+                    ]
+                },
+                "red": {
+                    "dq_team_keys": [],
+                    "score": 148,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc8024",
+                        "frc5903",
+                        "frc2826"
+                    ]
+                }
+            },
+            "comp_level": "qm",
+            "event_key": "2026wilax",
+            "key": "2026wilax_qm59",
+            "match_number": 59,
+            "predicted_time": 1775318144,
+            "set_number": 1,
+            "time": 1775318280,
+            "winning_alliance": "red"
+        },
+        "2026wilax_qm6": {
+            "actual_time": 1775234809,
+            "alliances": {
+                "blue": {
+                    "dq_team_keys": [],
+                    "score": 78,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc5019",
+                        "frc3381",
+                        "frc6574"
+                    ]
+                },
+                "red": {
+                    "dq_team_keys": [],
+                    "score": 79,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc7619",
+                        "frc8700",
+                        "frc2143"
+                    ]
+                }
+            },
+            "comp_level": "qm",
+            "event_key": "2026wilax",
+            "key": "2026wilax_qm6",
+            "match_number": 6,
+            "predicted_time": 1775234836,
+            "set_number": 1,
+            "time": 1775234700,
+            "winning_alliance": "red"
+        },
+        "2026wilax_qm60": {
+            "actual_time": 1775318590,
+            "alliances": {
+                "blue": {
+                    "dq_team_keys": [],
+                    "score": 178,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc11158",
+                        "frc4021",
+                        "frc1259"
+                    ]
+                },
+                "red": {
+                    "dq_team_keys": [],
+                    "score": 243,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc2194",
+                        "frc1792",
+                        "frc9149"
+                    ]
+                }
+            },
+            "comp_level": "qm",
+            "event_key": "2026wilax",
+            "key": "2026wilax_qm60",
+            "match_number": 60,
+            "predicted_time": 1775318590,
+            "set_number": 1,
+            "time": 1775318790,
+            "winning_alliance": "red"
+        },
+        "2026wilax_qm61": {
+            "actual_time": 1775319051,
+            "alliances": {
+                "blue": {
+                    "dq_team_keys": [],
+                    "score": 87,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc135",
+                        "frc8782",
+                        "frc171"
+                    ]
+                },
+                "red": {
+                    "dq_team_keys": [],
+                    "score": 102,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc2143",
+                        "frc3381",
+                        "frc8744"
+                    ]
+                }
+            },
+            "comp_level": "qm",
+            "event_key": "2026wilax",
+            "key": "2026wilax_qm61",
+            "match_number": 61,
+            "predicted_time": 1775319117,
+            "set_number": 1,
+            "time": 1775319300,
+            "winning_alliance": "red"
+        },
+        "2026wilax_qm62": {
+            "actual_time": 1775319565,
+            "alliances": {
+                "blue": {
+                    "dq_team_keys": [],
+                    "score": 132,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc4054",
+                        "frc5586",
+                        "frc5826"
+                    ]
+                },
+                "red": {
+                    "dq_team_keys": [
+                        "frc6574"
+                    ],
+                    "score": 150,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc6574",
+                        "frc11258",
+                        "frc9578"
+                    ]
+                }
+            },
+            "comp_level": "qm",
+            "event_key": "2026wilax",
+            "key": "2026wilax_qm62",
+            "match_number": 62,
+            "predicted_time": 1775319559,
+            "set_number": 1,
+            "time": 1775319810,
+            "winning_alliance": "red"
+        },
+        "2026wilax_qm63": {
+            "actual_time": 1775320064,
+            "alliances": {
+                "blue": {
+                    "dq_team_keys": [],
+                    "score": 317,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc930",
+                        "frc2826",
+                        "frc1259"
+                    ]
+                },
+                "red": {
+                    "dq_team_keys": [],
+                    "score": 173,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc4531",
+                        "frc6732",
+                        "frc1716"
+                    ]
+                }
+            },
+            "comp_level": "qm",
+            "event_key": "2026wilax",
+            "key": "2026wilax_qm63",
+            "match_number": 63,
+            "predicted_time": 1775320070,
+            "set_number": 1,
+            "time": 1775320320,
+            "winning_alliance": "blue"
+        },
+        "2026wilax_qm64": {
+            "actual_time": 1775320585,
+            "alliances": {
+                "blue": {
+                    "dq_team_keys": [],
+                    "score": 71,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc3418",
+                        "frc8700",
+                        "frc3381"
+                    ]
+                },
+                "red": {
+                    "dq_team_keys": [],
+                    "score": 88,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc11158",
+                        "frc11139",
+                        "frc2143"
+                    ]
+                }
+            },
+            "comp_level": "qm",
+            "event_key": "2026wilax",
+            "key": "2026wilax_qm64",
+            "match_number": 64,
+            "predicted_time": 1775320567,
+            "set_number": 1,
+            "time": 1775320830,
+            "winning_alliance": "red"
+        },
+        "2026wilax_qm65": {
+            "actual_time": 1775321085,
+            "alliances": {
+                "blue": {
+                    "dq_team_keys": [],
+                    "score": 174,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc7619",
+                        "frc6166",
+                        "frc4021"
+                    ]
+                },
+                "red": {
+                    "dq_team_keys": [],
+                    "score": 188,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc9149",
+                        "frc5826",
+                        "frc8782"
+                    ]
+                }
+            },
+            "comp_level": "qm",
+            "event_key": "2026wilax",
+            "key": "2026wilax_qm65",
+            "match_number": 65,
+            "predicted_time": 1775321092,
+            "set_number": 1,
+            "time": 1775321340,
+            "winning_alliance": "red"
+        },
+        "2026wilax_qm66": {
+            "actual_time": 1775321551,
+            "alliances": {
+                "blue": {
+                    "dq_team_keys": [],
+                    "score": 39,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc4054",
+                        "frc135",
+                        "frc5019"
+                    ]
+                },
+                "red": {
+                    "dq_team_keys": [],
+                    "score": 63,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc5586",
+                        "frc9578",
+                        "frc5903"
+                    ]
+                }
+            },
+            "comp_level": "qm",
+            "event_key": "2026wilax",
+            "key": "2026wilax_qm66",
+            "match_number": 66,
+            "predicted_time": 1775321593,
+            "set_number": 1,
+            "time": 1775321850,
+            "winning_alliance": "red"
+        },
+        "2026wilax_qm67": {
+            "actual_time": 1775322029,
+            "alliances": {
+                "blue": {
+                    "dq_team_keys": [],
+                    "score": 123,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc8024",
+                        "frc8744",
+                        "frc2194"
+                    ]
+                },
+                "red": {
+                    "dq_team_keys": [],
+                    "score": 112,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc706",
+                        "frc3692",
+                        "frc930"
+                    ]
+                }
+            },
+            "comp_level": "qm",
+            "event_key": "2026wilax",
+            "key": "2026wilax_qm67",
+            "match_number": 67,
+            "predicted_time": 1775322063,
+            "set_number": 1,
+            "time": 1775322360,
+            "winning_alliance": "blue"
+        },
+        "2026wilax_qm68": {
+            "actual_time": 1775322610,
+            "alliances": {
+                "blue": {
+                    "dq_team_keys": [],
+                    "score": 236,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc1792",
+                        "frc10264",
+                        "frc11258"
+                    ]
+                },
+                "red": {
+                    "dq_team_keys": [],
+                    "score": 276,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc4531",
+                        "frc6574",
+                        "frc171"
+                    ]
+                }
+            },
+            "comp_level": "qm",
+            "event_key": "2026wilax",
+            "key": "2026wilax_qm68",
+            "match_number": 68,
+            "predicted_time": 1775322712,
+            "set_number": 1,
+            "time": 1775322870,
+            "winning_alliance": "red"
+        },
+        "2026wilax_qm7": {
+            "actual_time": 1775235307,
+            "alliances": {
+                "blue": {
+                    "dq_team_keys": [],
+                    "score": 153,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc6166",
+                        "frc3692",
+                        "frc8744"
+                    ]
+                },
+                "red": {
+                    "dq_team_keys": [],
+                    "score": 81,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc171",
+                        "frc11258",
+                        "frc11139"
+                    ]
+                }
+            },
+            "comp_level": "qm",
+            "event_key": "2026wilax",
+            "key": "2026wilax_qm7",
+            "match_number": 7,
+            "predicted_time": 1775235401,
+            "set_number": 1,
+            "time": 1775235240,
+            "winning_alliance": "blue"
+        },
+        "2026wilax_qm8": {
+            "actual_time": 1775235849,
+            "alliances": {
+                "blue": {
+                    "dq_team_keys": [],
+                    "score": 175,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc5826",
+                        "frc4531",
+                        "frc706"
+                    ]
+                },
+                "red": {
+                    "dq_team_keys": [],
+                    "score": 311,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc5903",
+                        "frc2194",
+                        "frc1259"
+                    ]
+                }
+            },
+            "comp_level": "qm",
+            "event_key": "2026wilax",
+            "key": "2026wilax_qm8",
+            "match_number": 8,
+            "predicted_time": 1775235843,
+            "set_number": 1,
+            "time": 1775235780,
+            "winning_alliance": "red"
+        },
+        "2026wilax_qm9": {
+            "actual_time": 1775236338,
+            "alliances": {
+                "blue": {
+                    "dq_team_keys": [],
+                    "score": 92,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc10264",
+                        "frc8024",
+                        "frc4054"
+                    ]
+                },
+                "red": {
+                    "dq_team_keys": [],
+                    "score": 51,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc7619",
+                        "frc6732",
+                        "frc3381"
+                    ]
+                }
+            },
+            "comp_level": "qm",
+            "event_key": "2026wilax",
+            "key": "2026wilax_qm9",
+            "match_number": 9,
+            "predicted_time": 1775236379,
+            "set_number": 1,
+            "time": 1775236290,
+            "winning_alliance": "blue"
+        },
+        "2026wilax_sf10m1": {
+            "actual_time": 1775334622,
+            "alliances": {
+                "blue": {
+                    "dq_team_keys": [],
+                    "score": 130,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc2143",
+                        "frc9578",
+                        "frc5826"
+                    ]
+                },
+                "red": {
+                    "dq_team_keys": [],
+                    "score": 362,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc135",
+                        "frc930",
+                        "frc2194"
+                    ]
+                }
+            },
+            "comp_level": "sf",
+            "event_key": "2026wilax",
+            "key": "2026wilax_sf10m1",
+            "match_number": 1,
+            "predicted_time": 1775334723,
+            "set_number": 10,
+            "time": 1775334060,
+            "winning_alliance": "red"
+        },
+        "2026wilax_sf11m1": {
+            "actual_time": 1775335508,
+            "alliances": {
+                "blue": {
+                    "dq_team_keys": [],
+                    "score": 260,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc6732",
+                        "frc706",
+                        "frc8744"
+                    ]
+                },
+                "red": {
+                    "dq_team_keys": [],
+                    "score": 217,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc6574",
+                        "frc8782",
+                        "frc171"
+                    ]
+                }
+            },
+            "comp_level": "sf",
+            "event_key": "2026wilax",
+            "key": "2026wilax_sf11m1",
+            "match_number": 1,
+            "predicted_time": 1775336042,
+            "set_number": 11,
+            "time": 1775334780,
+            "winning_alliance": "blue"
+        },
+        "2026wilax_sf12m1": {
+            "actual_time": 1775336017,
+            "alliances": {
+                "blue": {
+                    "dq_team_keys": [],
+                    "score": 288,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc5586",
+                        "frc1792",
+                        "frc1259"
+                    ]
+                },
+                "red": {
+                    "dq_team_keys": [],
+                    "score": 163,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc135",
+                        "frc930",
+                        "frc2194"
+                    ]
+                }
+            },
+            "comp_level": "sf",
+            "event_key": "2026wilax",
+            "key": "2026wilax_sf12m1",
+            "match_number": 1,
+            "predicted_time": 1775336099,
+            "set_number": 12,
+            "time": 1775335320,
+            "winning_alliance": "blue"
+        },
+        "2026wilax_sf13m1": {
+            "actual_time": 1775337403,
+            "alliances": {
+                "blue": {
+                    "dq_team_keys": [],
+                    "score": 344,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc5586",
+                        "frc1792",
+                        "frc1259"
+                    ]
+                },
+                "red": {
+                    "dq_team_keys": [],
+                    "score": 241,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc6574",
+                        "frc8782",
+                        "frc171"
+                    ]
+                }
+            },
+            "comp_level": "sf",
+            "event_key": "2026wilax",
+            "key": "2026wilax_sf13m1",
+            "match_number": 1,
+            "predicted_time": 1775337443,
+            "set_number": 13,
+            "time": 1775336580,
+            "winning_alliance": "blue"
+        },
+        "2026wilax_sf1m1": {
+            "actual_time": 1775329395,
+            "alliances": {
+                "blue": {
+                    "dq_team_keys": [],
+                    "score": 88,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc6166",
+                        "frc11139",
+                        "frc8700"
+                    ]
+                },
+                "red": {
+                    "dq_team_keys": [],
+                    "score": 335,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc5586",
+                        "frc1792",
+                        "frc1259"
+                    ]
+                }
+            },
+            "comp_level": "sf",
+            "event_key": "2026wilax",
+            "key": "2026wilax_sf1m1",
+            "match_number": 1,
+            "predicted_time": 1775329248,
+            "set_number": 1,
+            "time": 1775329200,
+            "winning_alliance": "red"
+        },
+        "2026wilax_sf2m1": {
+            "actual_time": 1775330005,
+            "alliances": {
+                "blue": {
+                    "dq_team_keys": [],
+                    "score": 121,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc2143",
+                        "frc9578",
+                        "frc5826"
+                    ]
+                },
+                "red": {
+                    "dq_team_keys": [],
+                    "score": 316,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc6574",
+                        "frc8782",
+                        "frc171"
+                    ]
+                }
+            },
+            "comp_level": "sf",
+            "event_key": "2026wilax",
+            "key": "2026wilax_sf2m1",
+            "match_number": 1,
+            "predicted_time": 1775329979,
+            "set_number": 2,
+            "time": 1775329740,
+            "winning_alliance": "red"
+        },
+        "2026wilax_sf3m1": {
+            "actual_time": 1775330579,
+            "alliances": {
+                "blue": {
+                    "dq_team_keys": [],
+                    "score": 121,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc10264",
+                        "frc7619",
+                        "frc4531"
+                    ]
+                },
+                "red": {
+                    "dq_team_keys": [],
+                    "score": 299,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc135",
+                        "frc930",
+                        "frc2194"
+                    ]
+                }
+            },
+            "comp_level": "sf",
+            "event_key": "2026wilax",
+            "key": "2026wilax_sf3m1",
+            "match_number": 1,
+            "predicted_time": 1775330611,
+            "set_number": 3,
+            "time": 1775330280,
+            "winning_alliance": "red"
+        },
+        "2026wilax_sf4m1": {
+            "actual_time": 1775331229,
+            "alliances": {
+                "blue": {
+                    "dq_team_keys": [],
+                    "score": 148,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc2826",
+                        "frc4021",
+                        "frc9149"
+                    ]
+                },
+                "red": {
+                    "dq_team_keys": [],
+                    "score": 322,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc6732",
+                        "frc706",
+                        "frc8744"
+                    ]
+                }
+            },
+            "comp_level": "sf",
+            "event_key": "2026wilax",
+            "key": "2026wilax_sf4m1",
+            "match_number": 1,
+            "predicted_time": 1775331335,
+            "set_number": 4,
+            "time": 1775330820,
+            "winning_alliance": "red"
+        },
+        "2026wilax_sf5m1": {
+            "actual_time": 1775331740,
+            "alliances": {
+                "blue": {
+                    "dq_team_keys": [],
+                    "score": 194,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc2143",
+                        "frc9578",
+                        "frc5826"
+                    ]
+                },
+                "red": {
+                    "dq_team_keys": [],
+                    "score": 129,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc6166",
+                        "frc11139",
+                        "frc8700"
+                    ]
+                }
+            },
+            "comp_level": "sf",
+            "event_key": "2026wilax",
+            "key": "2026wilax_sf5m1",
+            "match_number": 1,
+            "predicted_time": 1775331789,
+            "set_number": 5,
+            "time": 1775331360,
+            "winning_alliance": "blue"
+        },
+        "2026wilax_sf6m1": {
+            "actual_time": 1775332292,
+            "alliances": {
+                "blue": {
+                    "dq_team_keys": [],
+                    "score": 175,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc2826",
+                        "frc9149",
+                        "frc4021"
+                    ]
+                },
+                "red": {
+                    "dq_team_keys": [],
+                    "score": 188,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc10264",
+                        "frc7619",
+                        "frc4531"
+                    ]
+                }
+            },
+            "comp_level": "sf",
+            "event_key": "2026wilax",
+            "key": "2026wilax_sf6m1",
+            "match_number": 1,
+            "predicted_time": 1775332299,
+            "set_number": 6,
+            "time": 1775331900,
+            "winning_alliance": "red"
+        },
+        "2026wilax_sf7m1": {
+            "actual_time": 1775332791,
+            "alliances": {
+                "blue": {
+                    "dq_team_keys": [],
+                    "score": 194,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc6574",
+                        "frc8782",
+                        "frc171"
+                    ]
+                },
+                "red": {
+                    "dq_team_keys": [],
+                    "score": 150,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc5586",
+                        "frc1792",
+                        "frc1259"
+                    ]
+                }
+            },
+            "comp_level": "sf",
+            "event_key": "2026wilax",
+            "key": "2026wilax_sf7m1",
+            "match_number": 1,
+            "predicted_time": 1775332850,
+            "set_number": 7,
+            "time": 1775332440,
+            "winning_alliance": "blue"
+        },
+        "2026wilax_sf8m1": {
+            "actual_time": 1775333337,
+            "alliances": {
+                "blue": {
+                    "dq_team_keys": [],
+                    "score": 216,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc6732",
+                        "frc706",
+                        "frc8744"
+                    ]
+                },
+                "red": {
+                    "dq_team_keys": [],
+                    "score": 191,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc135",
+                        "frc930",
+                        "frc2194"
+                    ]
+                }
+            },
+            "comp_level": "sf",
+            "event_key": "2026wilax",
+            "key": "2026wilax_sf8m1",
+            "match_number": 1,
+            "predicted_time": 1775333362,
+            "set_number": 8,
+            "time": 1775332980,
+            "winning_alliance": "blue"
+        },
+        "2026wilax_sf9m1": {
+            "actual_time": 1775334030,
+            "alliances": {
+                "blue": {
+                    "dq_team_keys": [],
+                    "score": 160,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc10264",
+                        "frc7619",
+                        "frc4531"
+                    ]
+                },
+                "red": {
+                    "dq_team_keys": [],
+                    "score": 279,
+                    "surrogate_team_keys": [],
+                    "team_keys": [
+                        "frc5586",
+                        "frc1792",
+                        "frc1259"
+                    ]
+                }
+            },
+            "comp_level": "sf",
+            "event_key": "2026wilax",
+            "key": "2026wilax_sf9m1",
+            "match_number": 1,
+            "predicted_time": 1775333933,
+            "set_number": 9,
+            "time": 1775333520,
+            "winning_alliance": "red"
+        }
+    },
+    "event_teams": {
+        "frc10264": {
+            "team_number": 10264,
+            "team_name": "STORM",
+            "season_wlt": "0-0-0",
+            "mroc_wlt": "6-6-0",
+            "epa": 0.0,
+            "avg_auto_score": 0.0,
+            "avg_teleop_score": 0.0,
+            "avg_match_score": 0.0
+        },
+        "frc11139": {
+            "team_number": 11139,
+            "team_name": "Blackhawk Robotics #11139",
+            "season_wlt": "0-0-0",
+            "mroc_wlt": "7-5-0",
+            "epa": 0.0,
+            "avg_auto_score": 0.0,
+            "avg_teleop_score": 0.0,
+            "avg_match_score": 0.0
+        },
+        "frc11158": {
+            "team_number": 11158,
+            "team_name": "Laconic Logic",
+            "season_wlt": "0-0-0",
+            "mroc_wlt": "5-7-0",
+            "epa": 0.0,
+            "avg_auto_score": 0.0,
+            "avg_teleop_score": 0.0,
+            "avg_match_score": 0.0
+        },
+        "frc11258": {
+            "team_number": 11258,
+            "team_name": "Honey Badgers",
+            "season_wlt": "0-0-0",
+            "mroc_wlt": "3-9-0",
+            "epa": 0.0,
+            "avg_auto_score": 0.0,
+            "avg_teleop_score": 0.0,
+            "avg_match_score": 0.0
+        },
+        "frc1259": {
+            "team_number": 1259,
+            "team_name": "Paradigm Shift",
+            "season_wlt": "0-0-0",
+            "mroc_wlt": "11-1-0",
+            "epa": 0.0,
+            "avg_auto_score": 0.0,
+            "avg_teleop_score": 0.0,
+            "avg_match_score": 0.0
+        },
+        "frc135": {
+            "team_number": 135,
+            "team_name": "Penn Robotics Black Knights",
+            "season_wlt": "0-0-0",
+            "mroc_wlt": "4-8-0",
+            "epa": 0.0,
+            "avg_auto_score": 0.0,
+            "avg_teleop_score": 0.0,
+            "avg_match_score": 0.0
+        },
+        "frc171": {
+            "team_number": 171,
+            "team_name": "Cheese Curd Herd",
+            "season_wlt": "0-0-0",
+            "mroc_wlt": "6-6-0",
+            "epa": 0.0,
+            "avg_auto_score": 0.0,
+            "avg_teleop_score": 0.0,
+            "avg_match_score": 0.0
+        },
+        "frc1716": {
+            "team_number": 1716,
+            "team_name": "Redbird Robotics",
+            "season_wlt": "0-0-0",
+            "mroc_wlt": "6-6-0",
+            "epa": 0.0,
+            "avg_auto_score": 0.0,
+            "avg_teleop_score": 0.0,
+            "avg_match_score": 0.0
+        },
+        "frc1792": {
+            "team_number": 1792,
+            "team_name": "Round Table Robotics",
+            "season_wlt": "0-0-0",
+            "mroc_wlt": "9-3-0",
+            "epa": 0.0,
+            "avg_auto_score": 0.0,
+            "avg_teleop_score": 0.0,
+            "avg_match_score": 0.0
+        },
+        "frc2143": {
+            "team_number": 2143,
+            "team_name": "Team Tobor",
+            "season_wlt": "0-0-0",
+            "mroc_wlt": "5-7-0",
+            "epa": 0.0,
+            "avg_auto_score": 0.0,
+            "avg_teleop_score": 0.0,
+            "avg_match_score": 0.0
+        },
+        "frc2194": {
+            "team_number": 2194,
+            "team_name": "Fondy Fire",
+            "season_wlt": "0-0-0",
+            "mroc_wlt": "8-4-0",
+            "epa": 0.0,
+            "avg_auto_score": 0.0,
+            "avg_teleop_score": 0.0,
+            "avg_match_score": 0.0
+        },
+        "frc2826": {
+            "team_number": 2826,
+            "team_name": "Wave Robotics",
+            "season_wlt": "0-0-0",
+            "mroc_wlt": "7-5-0",
+            "epa": 0.0,
+            "avg_auto_score": 0.0,
+            "avg_teleop_score": 0.0,
+            "avg_match_score": 0.0
+        },
+        "frc3381": {
+            "team_number": 3381,
+            "team_name": "Droid Rage",
+            "season_wlt": "0-0-0",
+            "mroc_wlt": "5-7-0",
+            "epa": 0.0,
+            "avg_auto_score": 0.0,
+            "avg_teleop_score": 0.0,
+            "avg_match_score": 0.0
+        },
+        "frc3418": {
+            "team_number": 3418,
+            "team_name": "RoboRiot",
+            "season_wlt": "0-0-0",
+            "mroc_wlt": "4-8-0",
+            "epa": 0.0,
+            "avg_auto_score": 0.0,
+            "avg_teleop_score": 0.0,
+            "avg_match_score": 0.0
+        },
+        "frc3692": {
+            "team_number": 3692,
+            "team_name": "Rock N' Robotics",
+            "season_wlt": "0-0-0",
+            "mroc_wlt": "4-8-0",
+            "epa": 0.0,
+            "avg_auto_score": 0.0,
+            "avg_teleop_score": 0.0,
+            "avg_match_score": 0.0
+        },
+        "frc4021": {
+            "team_number": 4021,
+            "team_name": "igKnightion",
+            "season_wlt": "0-0-0",
+            "mroc_wlt": "6-6-0",
+            "epa": 0.0,
+            "avg_auto_score": 0.0,
+            "avg_teleop_score": 0.0,
+            "avg_match_score": 0.0
+        },
+        "frc4054": {
+            "team_number": 4054,
+            "team_name": "The Aeronauts",
+            "season_wlt": "0-0-0",
+            "mroc_wlt": "6-6-0",
+            "epa": 0.0,
+            "avg_auto_score": 0.0,
+            "avg_teleop_score": 0.0,
+            "avg_match_score": 0.0
+        },
+        "frc4531": {
+            "team_number": 4531,
+            "team_name": "STEAMpunk",
+            "season_wlt": "0-0-0",
+            "mroc_wlt": "4-8-0",
+            "epa": 0.0,
+            "avg_auto_score": 0.0,
+            "avg_teleop_score": 0.0,
+            "avg_match_score": 0.0
+        },
+        "frc5019": {
+            "team_number": 5019,
+            "team_name": "Gearbox Heroes",
+            "season_wlt": "0-0-0",
+            "mroc_wlt": "5-7-0",
+            "epa": 0.0,
+            "avg_auto_score": 0.0,
+            "avg_teleop_score": 0.0,
+            "avg_match_score": 0.0
+        },
+        "frc5586": {
+            "team_number": 5586,
+            "team_name": "Bond Brigade",
+            "season_wlt": "0-0-0",
+            "mroc_wlt": "5-7-0",
+            "epa": 0.0,
+            "avg_auto_score": 0.0,
+            "avg_teleop_score": 0.0,
+            "avg_match_score": 0.0
+        },
+        "frc5826": {
+            "team_number": 5826,
+            "team_name": "Avis Automata",
+            "season_wlt": "0-0-0",
+            "mroc_wlt": "6-6-0",
+            "epa": 0.0,
+            "avg_auto_score": 0.0,
+            "avg_teleop_score": 0.0,
+            "avg_match_score": 0.0
+        },
+        "frc5903": {
+            "team_number": 5903,
+            "team_name": "ThorBots",
+            "season_wlt": "0-0-0",
+            "mroc_wlt": "7-5-0",
+            "epa": 0.0,
+            "avg_auto_score": 0.0,
+            "avg_teleop_score": 0.0,
+            "avg_match_score": 0.0
+        },
+        "frc6166": {
+            "team_number": 6166,
+            "team_name": "Thorobotics",
+            "season_wlt": "0-0-0",
+            "mroc_wlt": "5-7-0",
+            "epa": 0.0,
+            "avg_auto_score": 0.0,
+            "avg_teleop_score": 0.0,
+            "avg_match_score": 0.0
+        },
+        "frc6574": {
+            "team_number": 6574,
+            "team_name": "Ferradermis",
+            "season_wlt": "0-0-0",
+            "mroc_wlt": "9-2-0",
+            "epa": 0.0,
+            "avg_auto_score": 0.0,
+            "avg_teleop_score": 0.0,
+            "avg_match_score": 0.0
+        },
+        "frc6732": {
+            "team_number": 6732,
+            "team_name": "BHS RoboRaiders",
+            "season_wlt": "0-0-0",
+            "mroc_wlt": "6-6-0",
+            "epa": 0.0,
+            "avg_auto_score": 0.0,
+            "avg_teleop_score": 0.0,
+            "avg_match_score": 0.0
+        },
+        "frc706": {
+            "team_number": 706,
+            "team_name": "Cyberhawks",
+            "season_wlt": "0-0-0",
+            "mroc_wlt": "6-6-0",
+            "epa": 0.0,
+            "avg_auto_score": 0.0,
+            "avg_teleop_score": 0.0,
+            "avg_match_score": 0.0
+        },
+        "frc7619": {
+            "team_number": 7619,
+            "team_name": "illumiBOTi",
+            "season_wlt": "0-0-0",
+            "mroc_wlt": "5-7-0",
+            "epa": 0.0,
+            "avg_auto_score": 0.0,
+            "avg_teleop_score": 0.0,
+            "avg_match_score": 0.0
+        },
+        "frc8024": {
+            "team_number": 8024,
+            "team_name": "Robotans",
+            "season_wlt": "0-0-0",
+            "mroc_wlt": "4-8-0",
+            "epa": 0.0,
+            "avg_auto_score": 0.0,
+            "avg_teleop_score": 0.0,
+            "avg_match_score": 0.0
+        },
+        "frc8700": {
+            "team_number": 8700,
+            "team_name": "W.I.R.E.D",
+            "season_wlt": "0-0-0",
+            "mroc_wlt": "5-7-0",
+            "epa": 0.0,
+            "avg_auto_score": 0.0,
+            "avg_teleop_score": 0.0,
+            "avg_match_score": 0.0
+        },
+        "frc8744": {
+            "team_number": 8744,
+            "team_name": "Leviathans",
+            "season_wlt": "0-0-0",
+            "mroc_wlt": "8-4-0",
+            "epa": 0.0,
+            "avg_auto_score": 0.0,
+            "avg_teleop_score": 0.0,
+            "avg_match_score": 0.0
+        },
+        "frc8782": {
+            "team_number": 8782,
+            "team_name": "TroBotics",
+            "season_wlt": "0-0-0",
+            "mroc_wlt": "5-7-0",
+            "epa": 0.0,
+            "avg_auto_score": 0.0,
+            "avg_teleop_score": 0.0,
+            "avg_match_score": 0.0
+        },
+        "frc9149": {
+            "team_number": 9149,
+            "team_name": "RoboCats",
+            "season_wlt": "0-0-0",
+            "mroc_wlt": "7-5-0",
+            "epa": 0.0,
+            "avg_auto_score": 0.0,
+            "avg_teleop_score": 0.0,
+            "avg_match_score": 0.0
+        },
+        "frc930": {
+            "team_number": 930,
+            "team_name": "Mukwonago BEARs",
+            "season_wlt": "0-0-0",
+            "mroc_wlt": "7-5-0",
+            "epa": 0.0,
+            "avg_auto_score": 0.0,
+            "avg_teleop_score": 0.0,
+            "avg_match_score": 0.0
+        },
+        "frc9578": {
+            "team_number": 9578,
+            "team_name": "Player One",
+            "season_wlt": "0-0-0",
+            "mroc_wlt": "7-5-0",
+            "epa": 0.0,
+            "avg_auto_score": 0.0,
+            "avg_teleop_score": 0.0,
+            "avg_match_score": 0.0
+        }
+    }
+}

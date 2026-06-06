@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FRC Graphics Control Panel</title>
+    <style>
+        body { font-family: system-ui, sans-serif; background: #121212; color: #e0e0e0; margin: 0; padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; }
+        .card { background: #1e1e1e; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+        h1, h2 { margin-top: 0; color: #ffffff; }
+        input, select, button { width: 100%; padding: 10px; margin: 10px 0 20px 0; border-radius: 4px; border: 1px solid #333; background: #2d2d2d; color: #fff; box-sizing: border-box; }
+        button { background: #007acc; border: none; cursor: pointer; font-weight: bold; }
+        button:hover { background: #0062a3; }
+        .status { padding: 10px; border-radius: 4px; margin-top: -10px; margin-bottom: 20px; display: none; }
+        .success { background: #1e4620; color: #a3e635; }
+        .error { background: #5c1d1d; color: #fca5a5; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>FRC Graphics Control Panel</h1>
+        
+        <div class="card">
+            <h2>1. Event Configuration</h2>
+            <form id="syncForm">
+                <label for="event_key">Enter TBA Event Key:</label>
+                <input type="text" id="event_key" name="event_key" value="{{ data.event_key }}" placeholder="e.g., 2026micmp" required>
+                <button type="submit">Synchronize Event Data</button>
+            </form>
+            <div id="syncStatus" class="status"></div>
+        </div>
+
+        <div class="card">
+            <h2>2. Live Match Control</h2>
+            <form id="matchForm">
+                <label for="match_key">Select Active Match:</label>
+                <select id="match_key" name="match_key">
+                    <option value="">-- Select a Match --</option>
+                    {% for key, match in data.event_matches.items() | sort(attribute='1.time') %}
+                        <option value="{{ key }}" {% if key == data.current_match %}selected{% endif %}>
+                            {{ match.comp_level.upper() }}{{ match.match_number }}
+                        </option>
+                    {% endfor %}
+                </select>
+                <button type="submit">Update Active Match</button>
+            </form>
+            <div id="matchStatus" class="status"></div>
+        </div>
+    </div>
+
+    <script>
+        // Handle Event Sync Form
+        document.getElementById('syncForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const statusDiv = document.getElementById('syncStatus');
+            statusDiv.className = 'status';
+            statusDiv.style.display = 'block';
+            statusDiv.textContent = 'Syncing data... Please wait...';
+
+            const formData = new FormData(this);
+            fetch('/api/sync', { method: 'POST', body: formData })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        statusDiv.className = 'status success';
+                        statusDiv.textContent = data.message;
+                        setTimeout(() => { location.reload(); }, 1500); // Reload to populate dropdown
+                    } else {
+                        statusDiv.className = 'status error';
+                        statusDiv.textContent = data.message;
+                    }
+                })
+                .catch(() => {
+                    statusDiv.className = 'status error';
+                    statusDiv.textContent = 'An unexpected connection error occurred.';
+                });
+        });
+
+        // Handle Match Selection Form
+        document.getElementById('matchForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const statusDiv = document.getElementById('matchStatus');
+            const formData = new FormData(this);
+            
+            fetch('/api/set_active_match', { method: 'POST', body: formData })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        statusDiv.className = 'status success';
+                        statusDiv.textContent = 'vMix active match updated to: ' + data.current_match;
+                        statusDiv.style.display = 'block';
+                    } else {
+                        statusDiv.className = 'status error';
+                        statusDiv.textContent = data.message;
+                        statusDiv.style.display = 'block';
+                    }
+                });
+        });
+    </script>
+</body>
+</html>
