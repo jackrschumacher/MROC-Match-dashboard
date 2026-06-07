@@ -1,38 +1,57 @@
 import os
 import json
 import requests
+from datetime import datetime
 from flask import Flask, render_template, jsonify, request
 
 app = Flask(__name__)
 
 # --- CONFIGURATION ---
 TBA_API_KEY = ""  # Keep your API key here
-DATA_BACKUP_FILE = "data.json"
+TEAMS_FILE = "teams.json"
+MATCHES_FILE = "matches.json"
+
+# --- LOGGING SYSTEM ---
+server_logs = []
+
+def add_log(message):
+    timestamp = datetime.now().strftime("%H:%M:%S")
+    log_entry = f"[{timestamp}] {message}"
+    print(log_entry)
+    server_logs.append(log_entry)
+    if len(server_logs) > 300:
+        server_logs.pop(0)
 
 # --- DATA MANAGEMENT ---
-def load_data():
-    """Loads cached data from the local JSON file."""
-    if not os.path.exists(DATA_BACKUP_FILE):
+def load_teams():
+    if not os.path.exists(TEAMS_FILE):
+        save_teams({})
+        return {}
+    with open(TEAMS_FILE, "r") as file:
+        return json.load(file)
+
+def save_teams(data):
+    with open(TEAMS_FILE, "w") as file:
+        json.dump(data, file, indent=4)
+
+def load_matches():
+    if not os.path.exists(MATCHES_FILE):
         data = {
             "event_key": "",
             "event_name": "",
             "current_match": "",
-            "event_matches": {},
-            "event_teams": {}
+            "event_matches": {}
         }
-        save_data(data)
+        save_matches(data)
         return data
-    
-    with open(DATA_BACKUP_FILE, "r") as file:
+    with open(MATCHES_FILE, "r") as file:
         return json.load(file)
 
-def save_data(data):
-    """Saves data to the local JSON file."""
-    with open(DATA_BACKUP_FILE, "w") as file:
+def save_matches(data):
+    with open(MATCHES_FILE, "w") as file:
         json.dump(data, file, indent=4)
 
 def fetch_from_tba(endpoint):
-    """Helper function to request data from The Blue Alliance."""
     url = f"https://www.thebluealliance.com/api/v3/{endpoint}"
     headers = {"X-TBA-Auth-Key": TBA_API_KEY}
     response = requests.get(url, headers=headers)
@@ -40,67 +59,146 @@ def fetch_from_tba(endpoint):
         return response.json()
     return None
 
-def fetch_statbotics_epa(team_key, year):
-    """Fetches a team's EPA for a specific year from Statbotics API v3."""
+def fetch_statbotics_epa(team_key, year, verbose=False):
+    """
+    Fetch EPA from Statbotics v3 API.
+    v3 response shape: { "epa": { "mean": 45.2, "end": 47.0, ... }, "record": { "wins": 8, ... } }
+    Falls back to prior years if current year has no data yet.
+    """
     team_num = team_key.replace("frc", "")
-    url = f"https://api.statbotics.io/v3/team_year/{team_num}/{year}"
-    response = requests.get(url)
-    if response.status_code == 200:
-        return response.json()
+    for check_year in [year, str(int(year) - 1), str(int(year) - 2)]:
+        url = f"https://api.statbotics.io/v3/team_year/{team_num}/{check_year}"
+        try:
+            response = requests.get(url, timeout=5)
+            if verbose:
+                add_log(f"  [SB DEBUG] {url} -> HTTP {response.status_code}")
+            if response.status_code == 200:
+                data = response.json()
+                if verbose:
+                    add_log(f"  [SB DEBUG] keys: {list(data.keys()) if isinstance(data, dict) else 'NOT A DICT'}")
+                    add_log(f"  [SB DEBUG] epa field raw: {data.get('epa')}")
+                if data:
+                    return data
+            elif verbose:
+                add_log(f"  [SB DEBUG] body: {response.text[:300]}")
+        except requests.exceptions.RequestException as e:
+            add_log(f"Statbotics error for {team_num}/{check_year}: {e}")
+            continue
     return {}
 
 def sync_event_data(event_key):
-    """Core logic to fetch and save event data."""
-    matches = fetch_from_tba(f"event/{event_key}/matches/simple")
+    add_log(f"Starting sync for event: {event_key}")
+    
+    add_log("Fetching full match schedule from TBA...")
+    matches = fetch_from_tba(f"event/{event_key}/matches")
+    add_log("Fetching team roster from TBA...")
     teams = fetch_from_tba(f"event/{event_key}/teams/simple")
+    add_log("Fetching current rankings from TBA...")
     rankings_data = fetch_from_tba(f"event/{event_key}/rankings") 
     
     if matches is None or teams is None:
+        add_log(f"ERROR: Failed to fetch TBA data for {event_key}.")
         return False, f"Failed to fetch data for {event_key}. Check your key and TBA API key."
     
     year = event_key[:4]
-    current_data = load_data()
+    matches_data = load_matches()
     
-    # Process MROC WLT from event rankings
-    mroc_records = {}
+    event_records = {}
     if rankings_data and "rankings" in rankings_data:
         for rank_info in rankings_data["rankings"]:
             tk = rank_info["team_key"]
             rec = rank_info["record"]
-            mroc_records[tk] = f"{rec['wins']}-{rec['losses']}-{rec['ties']}"
+            event_records[tk] = f"{rec['wins']}-{rec['losses']}-{rec['ties']}"
     
-    current_data["event_key"] = event_key
-    current_data["event_matches"] = {m["key"]: m for m in matches}
+    matches_data["event_key"] = event_key
+    matches_data["event_matches"] = {m["key"]: m for m in matches}
     
-    print(f"Building profiles for {len(teams)} teams...")
-    event_teams = {}
-    
+    team_stats = {}
     for team in teams:
         tk = team["key"]
-        sb_data = fetch_statbotics_epa(tk, year)
+        team_stats[tk] = {"auto": 0, "teleop": 0, "match": 0, "count": 0}
+        
+    for m in matches:
+        # FIX: Only count matches that have actually been played
+        if not m.get("actual_time"):
+            continue 
+            
+        for alliance in ["red", "blue"]:
+            # FIX: Get the definitive match score from the alliance block directly
+            total_pts = m["alliances"][alliance].get("score", 0)
+            
+            # Safely get the score breakdown
+            score_data = (m.get("score_breakdown") or {}).get(alliance, {})
+            
+            # FIX: Fallback to multiple possible TBA keys if they change it this year
+            auto_pts = score_data.get("autoPoints", score_data.get("auto_points", 0))
+            teleop_pts = score_data.get("teleopPoints", score_data.get("teleop_points", 0))
+            
+            for tk in m["alliances"][alliance]["team_keys"]:
+                if tk in team_stats:
+                    team_stats[tk]["auto"] += auto_pts
+                    team_stats[tk]["teleop"] += teleop_pts
+                    team_stats[tk]["match"] += total_pts
+                    team_stats[tk]["count"] += 1
+    
+    add_log(f"Building local stats and fetching Statbotics EPA for {len(teams)} teams...")
+    event_teams = {}
+    
+    total_teams = len(teams)
+    for index, team in enumerate(teams, 1):
+        tk = team["key"]
+        
+        # Live progress logging
+        add_log(f"Fetching data for Team {team['team_number']} ({index}/{total_teams})...")
+        
+        # Run first team in verbose mode so logs expose the raw API response shape
+        sb_data = fetch_statbotics_epa(tk, year, verbose=(index == 1))
+        
+        # v3 API actual structure:
+        #   epa.total_points.mean  <- the primary mean EPA value
+        #   epa.stats.pre_champs   <- fallback end-of-season value
+        #   record.wins/losses/ties
+        epa_obj    = sb_data.get("epa") or {}
+        record_obj = sb_data.get("record") or {}
+
+        total_points = epa_obj.get("total_points") or {}
+        stats        = epa_obj.get("stats") or {}
+        epa = total_points.get("mean") or stats.get("pre_champs") or 0.0
+        wins   = record_obj.get("wins",   0) or 0
+        losses = record_obj.get("losses", 0) or 0
+        ties   = record_obj.get("ties",   0) or 0
+        
+        t_stats = team_stats[tk]
+        count = t_stats["count"]
+        if count > 0:
+            avg_auto = t_stats["auto"] / count
+            avg_teleop = t_stats["teleop"] / count
+            avg_match = t_stats["match"] / count
+        else:
+            avg_auto = avg_teleop = avg_match = 0.0
         
         event_teams[tk] = {
             "team_number": team["team_number"],
             "team_name": team["nickname"],
-            "season_wlt": f"{sb_data.get('wins', 0)}-{sb_data.get('losses', 0)}-{sb_data.get('ties', 0)}",
-            "mroc_wlt": mroc_records.get(tk, "0-0-0"),
-            "epa": round(sb_data.get("epa_end", 0.0), 1),
-            "avg_auto_score": round(sb_data.get("auto_epa_end", 0.0), 1),
-            "avg_teleop_score": round(sb_data.get("teleop_epa_end", 0.0), 1),
-            "avg_match_score": round(sb_data.get("epa_end", 0.0), 1) 
+            "season_wlt": f"{wins}-{losses}-{ties}",
+            "event_wlt": event_records.get(tk, "0-0-0"),
+            "epa": round(float(epa), 1),
+            "avg_auto_score": round(avg_auto, 1),
+            "avg_teleop_score": round(avg_teleop, 1),
+            "avg_match_score": round(avg_match, 1) 
         }
-        
-    current_data["event_teams"] = event_teams
     
-    # If the active match is from an old event, clear it
-    if current_data.get("current_match") not in current_data["event_matches"]:
-        current_data["current_match"] = ""
+    if matches_data.get("current_match") not in matches_data["event_matches"]:
+        matches_data["current_match"] = ""
     
-    save_data(current_data)
+    add_log("Saving fresh data to local JSON files...")
+    save_matches(matches_data)
+    save_teams(event_teams)
+    
+    add_log("Sync Complete!")
     return True, "Data synchronized successfully!"
 
 def calculate_h2h(team_a_key, team_b_key):
-    """Calculates H2H WLT between two teams for 2026 and since 2022."""
     wlt_2026 = [0, 0, 0]       
     wlt_since_2022 = [0, 0, 0]
     
@@ -120,7 +218,6 @@ def calculate_h2h(team_a_key, team_b_key):
             
             if team_b_key in m["alliances"][opponent_alliance]["team_keys"]:
                 winner = m.get("winning_alliance")
-                
                 is_tie = (winner == "" or winner is None)
                 is_win = (winner == team_a_alliance)
                 
@@ -143,16 +240,38 @@ def calculate_h2h(team_a_key, team_b_key):
 
 @app.route("/")
 def control_panel():
-    """Renders the web UI to control the graphics."""
-    data = load_data()
+    matches_data = load_matches()
+    teams_data = load_teams()
+    data = {**matches_data, "event_teams": teams_data}
     return render_template("control.html", data=data)
+
+@app.route("/api/debug/statbotics/<int:team_number>")
+def debug_statbotics(team_number):
+    """Hit Statbotics for a single team and return the raw response — useful for diagnosing EPA=0 issues."""
+    matches_data = load_matches()
+    year = (matches_data.get("event_key") or "2026")[:4]
+    team_key = f"frc{team_number}"
+    add_log(f"[DEBUG] Fetching raw Statbotics data for {team_number} (year={year})")
+    raw = fetch_statbotics_epa(team_key, year, verbose=True)
+    epa_obj = raw.get("epa") or {}
+    return jsonify({
+        "team": team_number,
+        "year_tried": year,
+        "raw_response": raw,
+        "parsed_epa_mean": epa_obj.get("mean"),
+        "parsed_epa_end": epa_obj.get("end"),
+        "parsed_record": raw.get("record"),
+    })
+
+@app.route("/api/logs")
+def api_logs():
+    return jsonify({"logs": server_logs})
 
 @app.route("/api/sync", methods=["POST"])
 def sync_tba_data():
-    """Triggered by the Web UI to fetch latest TBA data."""
     event_key = request.form.get("event_key")
-    
     if not event_key:
+        add_log("ERROR: Attempted to sync without an event key.")
         return jsonify({"status": "error", "message": "Event key is required."}), 400
 
     success, message = sync_event_data(event_key)
@@ -164,31 +283,33 @@ def sync_tba_data():
 
 @app.route("/api/set_active_match", methods=["POST"])
 def set_active_match():
-    """Updates which match key is currently displayed on screen."""
     match_key = request.form.get("match_key")
-    data = load_data()
-    if match_key in data["event_matches"]:
-        data["current_match"] = match_key
-        save_data(data)
+    matches_data = load_matches()
+    
+    if match_key in matches_data["event_matches"]:
+        matches_data["current_match"] = match_key
+        save_matches(matches_data)
+        add_log(f"Active match updated to: {match_key}")
         return jsonify({"status": "success", "current_match": match_key})
+        
+    add_log(f"ERROR: Invalid match key attempted: {match_key}")
     return jsonify({"status": "error", "message": "Invalid match key"}), 400
 
 # --- VMIX ENDPOINTS ---
 
 @app.route("/vmix/active_match.json")
 def vmix_active_match():
-    """Returns data for the currently selected match."""
-    data = load_data()
-    active_key = data.get("current_match")
+    matches_data = load_matches()
+    teams_data = load_teams()
+    active_key = matches_data.get("current_match")
     
-    if not active_key or active_key not in data.get("event_matches", {}):
+    if not active_key or active_key not in matches_data.get("event_matches", {}):
         return jsonify({"error": "No active match set"})
     
-    match = data["event_matches"][active_key]
+    match = matches_data["event_matches"][active_key]
     
     def get_epa(team_key):
-        team_data = data.get("event_teams", {}).get(team_key, {})
-        return team_data.get("epa", 0.0)
+        return teams_data.get(team_key, {}).get("epa", 0.0)
 
     red_keys = match["alliances"]["red"]["team_keys"]
     blue_keys = match["alliances"]["blue"]["team_keys"]
@@ -220,38 +341,35 @@ def vmix_active_match():
 
 @app.route("/vmix/team_profile/<team_number>.json")
 def vmix_team_profile(team_number):
-    """vMix endpoint for a single team's stats."""
-    data = load_data()
+    teams_data = load_teams()
     team_key = f"frc{team_number}"
     
-    if team_key not in data.get("event_teams", {}):
+    if team_key not in teams_data:
         return jsonify({"error": "Team not found in current event data"})
         
-    return jsonify(data["event_teams"][team_key])
+    return jsonify(teams_data[team_key])
 
 @app.route("/vmix/h2h/<team_a_number>/<team_b_number>.json")
 def vmix_h2h(team_a_number, team_b_number):
-    """vMix endpoint that generates H2H stats on the fly."""
     team_a_key = f"frc{team_a_number}"
     team_b_key = f"frc{team_b_number}"
     
-    data = load_data()
-    teams = data.get("event_teams", {})
+    teams_data = load_teams()
     
-    profile_a = teams.get(team_a_key, {})
-    profile_b = teams.get(team_b_key, {})
+    profile_a = teams_data.get(team_a_key, {})
+    profile_b = teams_data.get(team_b_key, {})
     
     h2h_stats = calculate_h2h(team_a_key, team_b_key)
     
     output = {
         "team_a_number": team_a_number,
         "team_a_name": profile_a.get("team_name", ""),
-        "team_a_mroc_wlt": profile_a.get("mroc_wlt", ""),
+        "team_a_event_wlt": profile_a.get("event_wlt", ""),
         "team_a_epa": profile_a.get("epa", ""),
         
         "team_b_number": team_b_number,
         "team_b_name": profile_b.get("team_name", ""),
-        "team_b_mroc_wlt": profile_b.get("mroc_wlt", ""),
+        "team_b_event_wlt": profile_b.get("event_wlt", ""),
         "team_b_epa": profile_b.get("epa", ""),
         
         "h2h_2026": h2h_stats["h2h_2026"],
@@ -263,21 +381,20 @@ def vmix_h2h(team_a_number, team_b_number):
 # --- STARTUP ROUTINE ---
 
 def startup_routine():
-    """Runs when the script is first executed to ensure fresh data on boot."""
-    print("--- FRC vMix API Initializing ---")
-    data = load_data()
-    event_key = data.get("event_key")
+    add_log("--- FRC vMix API Initializing ---")
+    matches_data = load_matches()
+    event_key = matches_data.get("event_key")
     
     if event_key:
-        print(f"Found saved event key: {event_key}. Syncing with TBA...")
+        add_log(f"Found saved event key: {event_key}. Syncing with TBA...")
         success, message = sync_event_data(event_key)
         if success:
-            print("Startup sync complete. Data is fresh.")
+            add_log("Startup sync complete. Data is fresh.")
         else:
-            print(f"Startup sync failed: {message}")
+            add_log(f"Startup sync failed: {message}")
     else:
-        print("No previous event key found. Waiting for user configuration via the Web UI.")
-    print("---------------------------------")
+        add_log("No previous event key found. Waiting for user configuration via the Web UI.")
+    add_log("---------------------------------")
 
 if __name__ == "__main__":
     if os.environ.get('WERKZEUG_RUN_MAIN') != 'true':
