@@ -59,10 +59,9 @@ def fetch_from_tba(endpoint):
         return response.json()
     return None
 
-def fetch_statbotics_epa(team_key, year, verbose=False):
+def fetch_statbotics_epa(team_key, year):
     """
     Fetch EPA from Statbotics v3 API.
-    v3 response shape: { "epa": { "mean": 45.2, "end": 47.0, ... }, "record": { "wins": 8, ... } }
     Falls back to prior years if current year has no data yet.
     """
     team_num = team_key.replace("frc", "")
@@ -70,17 +69,10 @@ def fetch_statbotics_epa(team_key, year, verbose=False):
         url = f"https://api.statbotics.io/v3/team_year/{team_num}/{check_year}"
         try:
             response = requests.get(url, timeout=5)
-            if verbose:
-                add_log(f"  [SB DEBUG] {url} -> HTTP {response.status_code}")
             if response.status_code == 200:
                 data = response.json()
-                if verbose:
-                    add_log(f"  [SB DEBUG] keys: {list(data.keys()) if isinstance(data, dict) else 'NOT A DICT'}")
-                    add_log(f"  [SB DEBUG] epa field raw: {data.get('epa')}")
                 if data:
                     return data
-            elif verbose:
-                add_log(f"  [SB DEBUG] body: {response.text[:300]}")
         except requests.exceptions.RequestException as e:
             add_log(f"Statbotics error for {team_num}/{check_year}: {e}")
             continue
@@ -151,8 +143,7 @@ def sync_event_data(event_key):
         # Live progress logging
         add_log(f"Fetching data for Team {team['team_number']} ({index}/{total_teams})...")
         
-        # Run first team in verbose mode so logs expose the raw API response shape
-        sb_data = fetch_statbotics_epa(tk, year, verbose=(index == 1))
+        sb_data = fetch_statbotics_epa(tk, year)
         
         # v3 API actual structure:
         #   epa.total_points.mean  <- the primary mean EPA value
