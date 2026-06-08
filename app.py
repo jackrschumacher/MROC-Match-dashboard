@@ -556,11 +556,65 @@ def api_reset_schedule():
 
 # --- MANUAL EDIT ENDPOINTS ---
 
+@app.route("/api/sync_scores", methods=["POST"])
+def api_sync_scores():
+    matches_data = load_matches()
+    event_key = matches_data.get("event_key", "")
+    if not event_key:
+        return jsonify({"status": "error", "message": "No event key configured."}), 400
+
+    tba_matches = fetch_from_tba(f"event/{event_key}/matches/simple")
+    if tba_matches is None:
+        return jsonify({"status": "error", "message": "Failed to fetch scores from TBA."}), 502
+
+    updated = 0
+    for tm in tba_matches:
+        key = tm.get("key")
+        if key not in matches_data["event_matches"]:
+            continue
+        if not tm.get("actual_time"):
+            continue
+        m = matches_data["event_matches"][key]
+        m["actual_time"]      = tm["actual_time"]
+        m["winning_alliance"] = tm.get("winning_alliance")
+        m["alliances"]["red"]["score"]  = tm["alliances"]["red"].get("score", -1)
+        m["alliances"]["blue"]["score"] = tm["alliances"]["blue"].get("score", -1)
+        updated += 1
+
+    # Recalculate event W/L/T
+    event_records = {}
+    for mk, match in matches_data["event_matches"].items():
+        w = match.get("winning_alliance")
+        if w is None:
+            continue
+        for side in ["red", "blue"]:
+            for tk in match["alliances"][side].get("team_keys", []):
+                if tk not in event_records:
+                    event_records[tk] = [0, 0, 0]
+                if w == "":
+                    event_records[tk][2] += 1
+                elif w == side:
+                    event_records[tk][0] += 1
+                else:
+                    event_records[tk][1] += 1
+
+    teams_data = load_teams()
+    for tk, rec in event_records.items():
+        if tk in teams_data:
+            teams_data[tk]["event_wlt"] = f"{rec[0]}-{rec[1]}-{rec[2]}"
+
+    save_matches(matches_data)
+    save_teams(teams_data)
+    add_log(f"Score sync: updated {updated} match result(s) from TBA.")
+    return jsonify({"status": "success", "updated": updated})
+
 @app.route("/api/set_match_result", methods=["POST"])
 def api_set_match_result():
     payload = request.get_json()
     match_key = payload.get("match_key")
     winner = payload.get("winner", "")  # "red", "blue", or "" (tie)
+    red_score  = payload.get("red_score")
+    blue_score = payload.get("blue_score")
 
     if winner not in ("red", "blue", ""):
         return jsonify({"status": "error", "message": "winner must be red, blue, or empty string for tie"}), 400
@@ -573,6 +627,10 @@ def api_set_match_result():
     m["winning_alliance"] = winner
     if not m.get("actual_time"):
         m["actual_time"] = int(datetime.now().timestamp())
+    if red_score is not None:
+        m["alliances"]["red"]["score"]  = int(red_score)
+    if blue_score is not None:
+        m["alliances"]["blue"]["score"] = int(blue_score)
 
     # Recalculate event W/L/T from all matches that have a result
     event_records = {}

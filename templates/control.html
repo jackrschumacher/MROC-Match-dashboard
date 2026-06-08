@@ -466,6 +466,20 @@
         .result-btn-blue:hover { background: rgba(40,80,200,0.28); }
         .result-btn.winner-set { opacity: 0.5; }
 
+        .score-entry-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 4px;
+        }
+        .score-entry-block { display: flex; flex-direction: column; }
+        .score-entry-block label { margin-bottom: 5px; font-size: 10px; }
+        .score-entry-block input { margin-bottom: 0; text-align: center; font-size: 15px; font-weight: 700; padding: 8px; }
+        .score-entry-red  input { border-color: #441a1a; background: rgba(180,40,40,0.06); color: #ee5555; }
+        .score-entry-blue input { border-color: #1a2a55; background: rgba(40,80,200,0.06); color: #5588ee; }
+        .score-entry-red  input:focus { border-color: #ee5555; box-shadow: 0 0 0 3px rgba(180,40,40,0.15); }
+        .score-entry-blue input:focus { border-color: #5588ee; box-shadow: 0 0 0 3px rgba(40,80,200,0.15); }
+
         /* ══════════════════════════════════════
            BUTTON — PRIMARY (non-form)
         ══════════════════════════════════════ */
@@ -886,7 +900,8 @@
             <div class="last-updated" id="lastUpdatedDisplay">
                 <span class="label">Last sync: </span><span class="value" id="lastUpdatedTime">Never</span>
             </div>
-            <button type="button" class="topbar-btn" id="syncNowBtn">↻ Sync</button>
+            <button type="button" class="topbar-btn" id="syncNowBtn">↻ Sync Event</button>
+            <button type="button" class="topbar-btn" id="syncScoresBtn">⬇ Sync Scores</button>
             <button type="button" class="topbar-btn" id="openEventSetupBtn">⚙ Event Setup</button>
             <button type="button" class="topbar-btn" id="openEditorBtn">✎ Data Editor</button>
             <button id="toggleLogsBtn" type="button" class="topbar-btn">
@@ -925,9 +940,19 @@
 
                 <div class="divider" style="margin-top:16px;margin-bottom:16px;"></div>
                 <label style="margin-bottom:12px;">Set Result &amp; Advance</label>
-                <div class="result-row">
-                    <button type="button" class="result-btn result-btn-red"  id="winRedBtn">🔴 Red</button>
-                    <button type="button" class="result-btn result-btn-blue" id="winBlueBtn">🔵 Blue</button>
+                <div class="score-entry-row">
+                    <div class="score-entry-block score-entry-red">
+                        <label style="color:#ee5555;">Red Score</label>
+                        <input type="number" id="redScoreInput" min="0" placeholder="—">
+                    </div>
+                    <div class="score-entry-block score-entry-blue">
+                        <label style="color:#5588ee;">Blue Score</label>
+                        <input type="number" id="blueScoreInput" min="0" placeholder="—">
+                    </div>
+                </div>
+                <div class="result-row" style="margin-top:8px;">
+                    <button type="button" class="result-btn result-btn-red"  id="winRedBtn">🔴 Red Wins</button>
+                    <button type="button" class="result-btn result-btn-blue" id="winBlueBtn">🔵 Blue Wins</button>
                     <button type="button" class="result-btn result-btn-tie"  id="winTieBtn" style="flex:0 0 auto; padding-left:14px; padding-right:14px;">Tie</button>
                 </div>
                 <div id="resultStatus" class="status"></div>
@@ -1191,10 +1216,16 @@ F1-1,1234,5678,9012,3456,7890,1122</code>
                 statusDiv.textContent = '✕ Select a match first.';
                 return;
             }
+            const redRaw  = document.getElementById('redScoreInput').value.trim();
+            const blueRaw = document.getElementById('blueScoreInput').value.trim();
+            const payload = { match_key: matchKey, winner };
+            if (redRaw  !== '') payload.red_score  = parseInt(redRaw,  10);
+            if (blueRaw !== '') payload.blue_score = parseInt(blueRaw, 10);
+
             fetch('/api/set_match_result', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ match_key: matchKey, winner })
+                body: JSON.stringify(payload)
             })
             .then(r => r.json())
             .then(data => {
@@ -1203,6 +1234,12 @@ F1-1,1234,5678,9012,3456,7890,1122</code>
                     statusDiv.className = 'status success';
                     statusDiv.style.display = 'block';
                     statusDiv.textContent = `✓ ${label} recorded. Advancing…`;
+                    document.getElementById('redScoreInput').value = '';
+                    document.getElementById('blueScoreInput').value = '';
+                    if (data.next_match) {
+                        document.getElementById('match_key').value = data.next_match;
+                        renderActiveMatch();
+                    }
                     setTimeout(() => location.reload(), 1000);
                 } else {
                     statusDiv.className = 'status error';
@@ -1220,6 +1257,40 @@ F1-1,1234,5678,9012,3456,7890,1122</code>
         document.getElementById('winRedBtn').addEventListener('click',  () => setMatchResult('red'));
         document.getElementById('winTieBtn').addEventListener('click',  () => setMatchResult(''));
         document.getElementById('winBlueBtn').addEventListener('click', () => setMatchResult('blue'));
+
+        // ── SYNC SCORES BUTTON + AUTO-SYNC ──
+        function syncScores(silent) {
+            const btn = document.getElementById('syncScoresBtn');
+            if (!silent) { btn.textContent = '⬇ Syncing…'; btn.disabled = true; }
+            fetch('/api/sync_scores', { method: 'POST' })
+                .then(r => r.json())
+                .then(data => {
+                    if (!silent) {
+                        btn.textContent = data.status === 'success'
+                            ? `✓ ${data.updated} updated`
+                            : '✕ Failed';
+                        btn.disabled = false;
+                        setTimeout(() => {
+                            btn.textContent = '⬇ Scores';
+                            if (data.updated > 0) location.reload();
+                        }, 2000);
+                    } else if (data.status === 'success' && data.updated > 0) {
+                        location.reload();
+                    }
+                })
+                .catch(() => {
+                    if (!silent) {
+                        btn.textContent = '✕ Error';
+                        btn.disabled = false;
+                        setTimeout(() => { btn.textContent = '⬇ Scores'; }, 2000);
+                    }
+                });
+        }
+
+        document.getElementById('syncScoresBtn').addEventListener('click', () => syncScores(false));
+
+        // Auto-sync scores every 2 minutes silently
+        setInterval(() => syncScores(true), 2 * 60 * 1000);
 
         // ── LIVE LOG FETCHING ──
         function fetchLogs() {
@@ -1660,8 +1731,8 @@ F1-1,1234,5678,9012,3456,7890,1122</code>
         // ── RECENT MATCHES ──
         function renderRecentMatches() {
             const completed = Object.values(matchesState)
-                .filter(m => m.actual_time)
-                .sort((a, b) => b.actual_time - a.actual_time)
+                .filter(m => m.winning_alliance !== null && m.winning_alliance !== undefined)
+                .sort((a, b) => (b.actual_time || 0) - (a.actual_time || 0))
                 .slice(0, 10);
 
             const el = document.getElementById('recentMatchesList');
@@ -1673,8 +1744,8 @@ F1-1,1234,5678,9012,3456,7890,1122</code>
             el.innerHTML = completed.map(m => {
                 const red  = m.alliances.red.team_keys.map(k => k.replace('frc', '')).join(' · ');
                 const blue = m.alliances.blue.team_keys.map(k => k.replace('frc', '')).join(' · ');
-                const rs = m.alliances.red.score  ?? '?';
-                const bs = m.alliances.blue.score ?? '?';
+                const rs = (m.alliances.red.score  != null && m.alliances.red.score  >= 0) ? m.alliances.red.score  : '?';
+                const bs = (m.alliances.blue.score != null && m.alliances.blue.score >= 0) ? m.alliances.blue.score : '?';
                 const w = m.winning_alliance;
                 const winClass = w === 'red' ? 'red' : w === 'blue' ? 'blue' : 'tie';
                 const winLabel = w === 'red' ? 'Red' : w === 'blue' ? 'Blue' : 'Tie';
