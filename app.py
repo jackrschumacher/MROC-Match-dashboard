@@ -26,7 +26,7 @@ import threading
 
 # --- DATA MANAGEMENT ---
 def load_teams():
-    if not os.path.exists(TEAMS_FILE):
+    if not os.path.exists(TEAMS_FILE) or os.path.getsize(TEAMS_FILE) == 0:
         save_teams({})
         return {}
     with open(TEAMS_FILE, "r") as file:
@@ -37,7 +37,7 @@ def save_teams(data):
         json.dump(data, file, indent=4)
 
 def load_matches():
-    if not os.path.exists(MATCHES_FILE):
+    if not os.path.exists(MATCHES_FILE) or os.path.getsize(MATCHES_FILE) == 0:
         data = {
             "event_key": "",
             "event_name": "",
