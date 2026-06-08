@@ -29,25 +29,30 @@ def load_teams():
     if not os.path.exists(TEAMS_FILE) or os.path.getsize(TEAMS_FILE) == 0:
         save_teams({})
         return {}
-    with open(TEAMS_FILE, "r") as file:
-        return json.load(file)
+    try:
+        with open(TEAMS_FILE, "r") as file:
+            return json.load(file)
+    except (json.JSONDecodeError, OSError):
+        add_log("WARNING: teams.json is corrupt, resetting to empty.")
+        save_teams({})
+        return {}
 
 def save_teams(data):
     with open(TEAMS_FILE, "w") as file:
         json.dump(data, file, indent=4)
 
 def load_matches():
+    default = {"event_key": "", "event_name": "", "current_match": "", "event_matches": {}}
     if not os.path.exists(MATCHES_FILE) or os.path.getsize(MATCHES_FILE) == 0:
-        data = {
-            "event_key": "",
-            "event_name": "",
-            "current_match": "",
-            "event_matches": {}
-        }
-        save_matches(data)
-        return data
-    with open(MATCHES_FILE, "r") as file:
-        return json.load(file)
+        save_matches(default)
+        return default
+    try:
+        with open(MATCHES_FILE, "r") as file:
+            return json.load(file)
+    except (json.JSONDecodeError, OSError):
+        add_log("WARNING: matches.json is corrupt, resetting to defaults.")
+        save_matches(default)
+        return default
 
 def save_matches(data):
     with open(MATCHES_FILE, "w") as file:
@@ -314,19 +319,30 @@ def debug_statbotics(team_number):
 def api_logs():
     return jsonify({"logs": server_logs})
 
+# --- SYNC STATE ---
+sync_state = {"running": False, "success": None, "message": ""}
+
+def _run_sync(event_key):
+    global sync_state
+    sync_state = {"running": True, "success": None, "message": ""}
+    success, message = sync_event_data(event_key)
+    sync_state = {"running": False, "success": success, "message": message}
+
+@app.route("/api/sync_status")
+def api_sync_status():
+    return jsonify(sync_state)
+
 @app.route("/api/sync", methods=["POST"])
 def sync_tba_data():
+    global sync_state
+    if sync_state["running"]:
+        return jsonify({"status": "error", "message": "Sync already in progress."}), 409
     event_key = request.form.get("event_key")
     if not event_key:
         add_log("ERROR: Attempted to sync without an event key.")
         return jsonify({"status": "error", "message": "Event key is required."}), 400
-
-    success, message = sync_event_data(event_key)
-    
-    if success:
-        return jsonify({"status": "success", "message": message})
-    else:
-        return jsonify({"status": "error", "message": message}), 500
+    threading.Thread(target=_run_sync, args=(event_key,), daemon=True).start()
+    return jsonify({"status": "started"})
 
 @app.route("/api/set_active_match", methods=["POST"])
 def set_active_match():
@@ -429,14 +445,15 @@ def api_h2h(team_a_number, team_b_number):
 
 @app.route("/api/sync_current", methods=["POST"])
 def api_sync_current():
+    global sync_state
+    if sync_state["running"]:
+        return jsonify({"status": "error", "message": "Sync already in progress."}), 409
     matches_data = load_matches()
     event_key = matches_data.get("event_key", "")
     if not event_key:
         return jsonify({"status": "error", "message": "No event key configured. Use Event Setup first."}), 400
-    success, message = sync_event_data(event_key)
-    if success:
-        return jsonify({"status": "success", "message": message})
-    return jsonify({"status": "error", "message": message}), 500
+    threading.Thread(target=_run_sync, args=(event_key,), daemon=True).start()
+    return jsonify({"status": "started"})
 
 @app.route("/api/import/schedule", methods=["POST"])
 def api_import_schedule():

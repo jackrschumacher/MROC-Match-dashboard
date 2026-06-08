@@ -1023,11 +1023,8 @@ F1-1,1234,5678,9012,3456,7890,1122</code>
             fetch('/api/sync', { method: 'POST', body: new FormData(this) })
                 .then(res => res.json())
                 .then(data => {
-                    if (data.status === 'success') {
-                        statusDiv.className = 'status success';
-                        statusDiv.textContent = '✓ ' + data.message;
-                        setLastUpdated();
-                        setTimeout(() => { location.reload(); }, 1500);
+                    if (data.status === 'started') {
+                        pollSyncForm(statusDiv);
                     } else {
                         statusDiv.className = 'status error';
                         statusDiv.textContent = '✕ ' + data.message;
@@ -1123,9 +1120,8 @@ F1-1,1234,5678,9012,3456,7890,1122</code>
             fetch('/api/sync_current', { method: 'POST' })
                 .then(r => r.json())
                 .then(data => {
-                    if (data.status === 'success') {
-                        setLastUpdated();
-                        setTimeout(() => location.reload(), 1200);
+                    if (data.status === 'started') {
+                        pollSyncStatus(btn);
                     } else {
                         btn.textContent = '✕ Failed';
                         btn.disabled = false;
@@ -1138,6 +1134,43 @@ F1-1,1234,5678,9012,3456,7890,1122</code>
                     setTimeout(() => { btn.textContent = '↻ Sync'; }, 3000);
                 });
         });
+
+        function pollSyncStatus(btn) {
+            fetch('/api/sync_status')
+                .then(r => r.json())
+                .then(state => {
+                    if (state.running) {
+                        setTimeout(() => pollSyncStatus(btn), 1000);
+                    } else if (state.success) {
+                        setLastUpdated();
+                        setTimeout(() => location.reload(), 1200);
+                    } else {
+                        btn.textContent = '✕ Failed';
+                        btn.disabled = false;
+                        setTimeout(() => { btn.textContent = '↻ Sync'; }, 3000);
+                    }
+                })
+                .catch(() => setTimeout(() => pollSyncStatus(btn), 1000));
+        }
+
+        function pollSyncForm(statusDiv) {
+            fetch('/api/sync_status')
+                .then(r => r.json())
+                .then(state => {
+                    if (state.running) {
+                        setTimeout(() => pollSyncForm(statusDiv), 1000);
+                    } else if (state.success) {
+                        statusDiv.className = 'status success';
+                        statusDiv.textContent = '✓ ' + state.message;
+                        setLastUpdated();
+                        setTimeout(() => location.reload(), 1500);
+                    } else {
+                        statusDiv.className = 'status error';
+                        statusDiv.textContent = '✕ ' + state.message;
+                    }
+                })
+                .catch(() => setTimeout(() => pollSyncForm(statusDiv), 1000));
+        }
 
         // ── CSV FILE INPUT ──
         document.getElementById('csvFileInput').addEventListener('change', function () {
