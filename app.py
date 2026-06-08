@@ -22,6 +22,8 @@ def add_log(message):
     if len(server_logs) > 500:
         server_logs.pop(0)
 
+import threading
+
 # --- DATA MANAGEMENT ---
 def load_teams():
     if not os.path.exists(TEAMS_FILE):
@@ -227,6 +229,46 @@ def calculate_h2h(team_a_key, team_b_key):
         "h2h_since_2022": f"{wlt_since_2022[0]}-{wlt_since_2022[1]}-{wlt_since_2022[2]}"
     }
 
+# --- MATCH ORDERING ---
+
+def sorted_match_keys(event_matches):
+    """Return match keys in play order: quals → semis → finals, then by set/match number."""
+    level_order = {"qm": 0, "sf": 1, "f": 2}
+    return sorted(
+        event_matches.keys(),
+        key=lambda k: (
+            level_order.get(event_matches[k].get("comp_level", ""), 9),
+            event_matches[k].get("set_number", 0),
+            event_matches[k].get("match_number", 0),
+        )
+    )
+
+def find_next_match(matches_data, current_key):
+    keys = sorted_match_keys(matches_data.get("event_matches", {}))
+    try:
+        idx = keys.index(current_key)
+        return keys[idx + 1] if idx + 1 < len(keys) else None
+    except ValueError:
+        return None
+
+# --- MATCH NAME FORMATTING ---
+
+def format_match_name(match):
+    """Return a human-readable match title, using custom_name override if set."""
+    custom = (match.get("custom_name") or "").strip()
+    if custom:
+        return custom
+    level = match.get("comp_level", "")
+    set_num = match.get("set_number", 1)
+    match_num = match.get("match_number", 1)
+    if level == "qm":
+        return f"Qualification Match {match_num}"
+    elif level == "sf":
+        return f"Semifinal {set_num} Match {match_num}"
+    elif level == "f":
+        return f"Finals Match {match_num}"
+    return f"{level.upper()}{set_num}-{match_num}"
+
 # --- CORE API ROUTES ---
 
 @app.route("/")
@@ -300,10 +342,10 @@ def set_active_match():
     add_log(f"ERROR: Invalid match key attempted: {match_key}")
     return jsonify({"status": "error", "message": "Invalid match key"}), 400
 
-# --- VMIX ENDPOINTS ---
+# --- api ENDPOINTS ---
 
-@app.route("/vmix/active_match.json")
-def vmix_active_match():
+@app.route("/api/active_match.json")
+def api_active_match():
     matches_data = load_matches()
     teams_data = load_teams()
     active_key = matches_data.get("current_match")
@@ -320,10 +362,7 @@ def vmix_active_match():
     blue_keys = match["alliances"]["blue"]["team_keys"]
     
     output = {
-        "match_name": (
-            f"QM{match['match_number']}" if match["comp_level"] == "qm"
-            else f"{match['comp_level'].upper()}{match['set_number']}-{match['match_number']}"
-        ),
+        "match_name": format_match_name(match),
         
         "red_1": red_keys[0].replace("frc", ""),
         "red_1_epa": get_epa(red_keys[0]),
@@ -347,8 +386,8 @@ def vmix_active_match():
 
     return jsonify(output)
 
-@app.route("/vmix/team_profile/<team_number>.json")
-def vmix_team_profile(team_number):
+@app.route("/api/team_profile/<team_number>.json")
+def api_team_profile(team_number):
     teams_data = load_teams()
     team_key = f"frc{team_number}"
     
@@ -357,8 +396,8 @@ def vmix_team_profile(team_number):
         
     return jsonify(teams_data[team_key])
 
-@app.route("/vmix/h2h/<team_a_number>/<team_b_number>.json")
-def vmix_h2h(team_a_number, team_b_number):
+@app.route("/api/h2h/<team_a_number>/<team_b_number>.json")
+def api_h2h(team_a_number, team_b_number):
     team_a_key = f"frc{team_a_number}"
     team_b_key = f"frc{team_b_number}"
     
@@ -486,6 +525,71 @@ def api_reset_schedule():
 
 # --- MANUAL EDIT ENDPOINTS ---
 
+@app.route("/api/set_match_result", methods=["POST"])
+def api_set_match_result():
+    payload = request.get_json()
+    match_key = payload.get("match_key")
+    winner = payload.get("winner", "")  # "red", "blue", or "" (tie)
+
+    if winner not in ("red", "blue", ""):
+        return jsonify({"status": "error", "message": "winner must be red, blue, or empty string for tie"}), 400
+
+    matches_data = load_matches()
+    if match_key not in matches_data.get("event_matches", {}):
+        return jsonify({"status": "error", "message": "Match not found"}), 404
+
+    m = matches_data["event_matches"][match_key]
+    m["winning_alliance"] = winner
+    if not m.get("actual_time"):
+        m["actual_time"] = int(datetime.now().timestamp())
+
+    # Recalculate event W/L/T from all matches that have a result
+    event_records = {}
+    for mk, match in matches_data["event_matches"].items():
+        w = match.get("winning_alliance")
+        if w is None:
+            continue
+        for side in ["red", "blue"]:
+            for tk in match["alliances"][side].get("team_keys", []):
+                if tk not in event_records:
+                    event_records[tk] = [0, 0, 0]
+                if w == "":
+                    event_records[tk][2] += 1
+                elif w == side:
+                    event_records[tk][0] += 1
+                else:
+                    event_records[tk][1] += 1
+
+    teams_data = load_teams()
+    for tk, rec in event_records.items():
+        if tk in teams_data:
+            teams_data[tk]["event_wlt"] = f"{rec[0]}-{rec[1]}-{rec[2]}"
+
+    # Advance to next match
+    next_key = find_next_match(matches_data, match_key)
+    if next_key:
+        matches_data["current_match"] = next_key
+
+    save_matches(matches_data)
+    save_teams(teams_data)
+
+    label = "Tie" if winner == "" else f"{winner.capitalize()} wins"
+    add_log(f"Result: {match_key} → {label}. Active match → {next_key or 'none'}")
+    return jsonify({"status": "success", "next_match": next_key})
+
+@app.route("/api/edit/match_title", methods=["POST"])
+def api_edit_match_title():
+    payload = request.get_json()
+    match_key = payload.get("match_key")
+    title = payload.get("title", "").strip()
+    matches_data = load_matches()
+    if match_key not in matches_data.get("event_matches", {}):
+        return jsonify({"status": "error", "message": "Match not found"}), 404
+    matches_data["event_matches"][match_key]["custom_name"] = title
+    save_matches(matches_data)
+    add_log(f"Match title updated: {match_key} → '{title or '(reset to default)'}'")
+    return jsonify({"status": "success"})
+
 @app.route("/api/edit/team", methods=["POST"])
 def api_edit_team():
     payload = request.get_json()
@@ -518,10 +622,34 @@ def api_edit_match_roster():
     add_log(f"Manual edit: updated roster for {match_key}")
     return jsonify({"status": "success"})
 
+@app.route("/api/rankings.json")
+def api_rankings():
+    teams_data = load_teams()
+
+    def sort_key(item):
+        wlt = item[1].get("event_wlt", "0-0-0")
+        try:
+            w, l, t = [int(x) for x in wlt.split("-")]
+        except ValueError:
+            w, l, t = 0, 0, 0
+        return (w, -l, t)   # most wins → fewest losses → most ties
+
+    ranked = sorted(teams_data.items(), key=sort_key, reverse=True)
+
+    return jsonify([
+        {
+            "rank":        rank,
+            "team_number": team["team_number"],
+            "team_name":   team["team_name"],
+            "record":      team.get("event_wlt", "0-0-0"),
+        }
+        for rank, (_, team) in enumerate(ranked, 1)
+    ])
+
 # --- STARTUP ROUTINE ---
 
 def startup_routine():
-    add_log("--- FRC vMix API Initializing ---")
+    add_log("--- FRC API Initializing ---")
     matches_data = load_matches()
     event_key = matches_data.get("event_key")
     
@@ -536,8 +664,11 @@ def startup_routine():
         add_log("No previous event key found. Waiting for user configuration via the Web UI.")
     add_log("---------------------------------")
 
+# Run startup sync in a background thread.
+# - Under Flask dev server: WERKZEUG_RUN_MAIN guard prevents double-run from the reloader.
+# - Under Gunicorn/Waitress: __name__ != "__main__", so this block is what triggers it.
+if os.environ.get('WERKZEUG_RUN_MAIN') != 'true':
+    threading.Thread(target=startup_routine, daemon=True).start()
+
 if __name__ == "__main__":
-    if os.environ.get('WERKZEUG_RUN_MAIN') != 'true':
-        startup_routine()
-        
     app.run(host="0.0.0.0", port=5000, debug=True)

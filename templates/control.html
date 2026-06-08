@@ -438,6 +438,35 @@
             margin: 0 0 18px 0;
         }
         /* ══════════════════════════════════════
+           RESULT BUTTONS
+        ══════════════════════════════════════ */
+        .result-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 4px;
+        }
+        .result-btn {
+            flex: 1;
+            padding: 10px 6px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            transition: all 0.15s;
+            border: 1px solid;
+        }
+        .result-btn-red  { background: rgba(180,40,40,0.12); color: #ee5555; border-color: #441a1a; }
+        .result-btn-red:hover  { background: rgba(180,40,40,0.28); }
+        .result-btn-tie  { background: var(--bg-btn); color: var(--text-muted); border-color: var(--border-mid); }
+        .result-btn-tie:hover  { background: var(--bg-btn-hover); color: var(--text-primary); border-color: var(--border-accent); }
+        .result-btn-blue { background: rgba(40,80,200,0.12); color: #5588ee; border-color: #1a2a55; }
+        .result-btn-blue:hover { background: rgba(40,80,200,0.28); }
+        .result-btn.winner-set { opacity: 0.5; }
+
+        /* ══════════════════════════════════════
            BUTTON — PRIMARY (non-form)
         ══════════════════════════════════════ */
         .btn-primary {
@@ -620,6 +649,41 @@
         .roster-alliance input { margin-bottom: 10px; }
         #rosterStatus { margin-top: 10px; }
 
+        /* ── Roster title field ── */
+        .roster-title-wrap { margin-bottom: 18px; }
+        .roster-title-wrap label { margin-bottom: 7px; }
+
+        /* ── Team match expansion ── */
+        .team-matches-row td {
+            padding: 0 !important;
+            background: var(--bg-raised) !important;
+        }
+        .team-matches-inner {
+            padding: 8px 12px 10px 32px;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+        .team-matches-inner table {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+        }
+        .team-matches-inner td { padding: 4px 10px; color: var(--text-secondary); }
+        .team-matches-inner td:first-child { color: var(--text-primary); }
+        .alliance-pill {
+            display: inline-block;
+            padding: 1px 7px;
+            border-radius: 3px;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+        .alliance-pill.red  { background: rgba(200,50,50,0.2);  color: #ee6666; border: 1px solid rgba(200,50,50,0.3); }
+        .alliance-pill.blue { background: rgba(50,100,200,0.2); color: #6699ee; border: 1px solid rgba(50,100,200,0.3); }
+        .btn-tbl-expand { background: var(--bg-raised); color: var(--text-muted); min-width: 28px; }
+        .btn-tbl-expand:hover { color: var(--text-primary); }
+
         /* ── CSV import tab ── */
         .csv-hint {
             font-family: 'IBM Plex Mono', monospace;
@@ -638,8 +702,32 @@
             white-space: pre;
             font-size: 11px;
         }
-        .csv-file-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
-        .csv-file-row input[type="file"] { margin: 0; flex: 1; font-size: 11px; padding: 6px 8px; }
+        .csv-file-row { margin-bottom: 10px; }
+        .csv-file-row input[type="file"] {
+            margin: 0;
+            width: 100%;
+            font-size: 11px;
+            padding: 7px 10px;
+            cursor: pointer;
+        }
+        .csv-actions { display: flex; gap: 10px; flex-shrink: 0; }
+        .csv-actions button {
+            flex: 1;
+            padding: 11px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            transition: all 0.15s ease;
+            white-space: nowrap;
+        }
+        #csvImportBtn  { background: var(--bg-btn); border: 1px solid var(--border-accent); color: var(--text-btn); }
+        #csvImportBtn:hover  { background: var(--bg-btn-hover); border-color: var(--border-focus); color: var(--text-btn-hover); }
+        #clearScheduleBtn { flex: 0 0 auto; background: transparent; border: 1px solid #441a1a; color: #ee5555; }
+        #clearScheduleBtn:hover { background: rgba(180,40,40,0.12); }
         #csvTextarea {
             width: 100%;
             flex: 1;
@@ -726,10 +814,10 @@
                         <option value="">— Select a Match —</option>
                         {% for key, match in data.event_matches.items() | sort(attribute='1.time', reverse=False) %}
                             <option value="{{ key }}" {% if key == data.current_match %}selected{% endif %}>
-                                {% if match.comp_level == 'qm' %}
-                                    QM{{ match.match_number }}
-                                {% else %}
-                                    {{ match.comp_level.upper() }}{{ match.set_number }}-{{ match.match_number }}
+                                {% if match.custom_name %}{{ match.custom_name }}
+                                {% elif match.comp_level == 'qm' %}Qualification Match {{ match.match_number }}
+                                {% elif match.comp_level == 'sf' %}Semifinal {{ match.set_number }} Match {{ match.match_number }}
+                                {% else %}Finals Match {{ match.match_number }}
                                 {% endif %}
                             </option>
                         {% endfor %}
@@ -737,6 +825,15 @@
                     <button type="submit">▶ Set Active Match</button>
                 </form>
                 <div id="matchStatus" class="status"></div>
+
+                <div class="divider" style="margin-top:16px;margin-bottom:16px;"></div>
+                <label style="margin-bottom:12px;">Set Result &amp; Advance</label>
+                <div class="result-row">
+                    <button type="button" class="result-btn result-btn-red"  id="winRedBtn">🔴 Red</button>
+                    <button type="button" class="result-btn result-btn-blue" id="winBlueBtn">🔵 Blue</button>
+                    <button type="button" class="result-btn result-btn-tie"  id="winTieBtn" style="flex:0 0 auto; padding-left:14px; padding-right:14px;">Tie</button>
+                </div>
+                <div id="resultStatus" class="status"></div>
             </div>
 
         </div>
@@ -816,6 +913,10 @@
                             <label>Select Match</label>
                             <select id="rosterMatchSelect"></select>
                         </div>
+                        <div class="roster-title-wrap">
+                            <label>Display Name <span style="color:var(--text-muted);font-size:10px;text-transform:none;letter-spacing:0;">(leave blank to use default)</span></label>
+                            <input type="text" id="rosterTitle" placeholder="e.g. Qualification Match 1">
+                        </div>
                         <div class="roster-alliances">
                             <div class="roster-alliance red">
                                 <h3>Red Alliance</h3>
@@ -844,8 +945,8 @@
                 <!-- SCHEDULE IMPORT TAB -->
                 <div class="tab-pane" id="tab-schedule">
                     <div class="csv-hint">
-                        Paste or upload a CSV with columns: <strong>Match, Red1, Red2, Red3, Blue1, Blue2, Blue3</strong><br>
-                        Match formats: <code>QM1, QM12, SF1-1, SF2-3, F1-1, F1-2</code>
+                        Columns: <strong>Match, Red1, Red2, Red3, Blue1, Blue2, Blue3</strong>
+                        &nbsp;·&nbsp; Formats: <span style="font-family:'IBM Plex Mono',monospace;">QM1 &nbsp;SF1-1 &nbsp;SF2-3 &nbsp;F1-1</span>
                         <code>Match,Red1,Red2,Red3,Blue1,Blue2,Blue3
 QM1,1234,5678,9012,3456,7890,1122
 SF1-1,1234,5678,9012,3456,7890,1122
@@ -855,9 +956,9 @@ F1-1,1234,5678,9012,3456,7890,1122</code>
                         <input type="file" id="csvFileInput" accept=".csv,.txt">
                     </div>
                     <textarea id="csvTextarea" placeholder="…or paste CSV here"></textarea>
-                    <div style="display:flex; gap:10px; margin-bottom:0;">
-                        <button type="button" class="btn-primary" id="csvImportBtn" style="flex:1;">⬆ Import Schedule</button>
-                        <button type="button" class="btn-primary" id="clearScheduleBtn" style="flex:0 0 auto; border-color:#441a1a; color:#ee5555;">✕ Clear Schedule</button>
+                    <div class="csv-actions">
+                        <button type="button" id="csvImportBtn">⬆ Import Schedule</button>
+                        <button type="button" id="clearScheduleBtn">✕ Clear Schedule</button>
                     </div>
                     <div id="csvImportStatus" class="status"></div>
                 </div>
@@ -955,6 +1056,46 @@ F1-1,1234,5678,9012,3456,7890,1122</code>
                     statusDiv.style.display = 'block';
                 });
         });
+
+        // ── RESULT BUTTONS ──
+        function setMatchResult(winner) {
+            const matchKey = document.getElementById('match_key').value;
+            const statusDiv = document.getElementById('resultStatus');
+            if (!matchKey) {
+                statusDiv.className = 'status error';
+                statusDiv.style.display = 'block';
+                statusDiv.textContent = '✕ Select a match first.';
+                return;
+            }
+            fetch('/api/set_match_result', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ match_key: matchKey, winner })
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    const label = winner === '' ? 'Tie' : winner === 'red' ? '🔴 Red wins' : '🔵 Blue wins';
+                    statusDiv.className = 'status success';
+                    statusDiv.style.display = 'block';
+                    statusDiv.textContent = `✓ ${label} recorded. Advancing…`;
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    statusDiv.className = 'status error';
+                    statusDiv.style.display = 'block';
+                    statusDiv.textContent = '✕ ' + data.message;
+                }
+            })
+            .catch(() => {
+                statusDiv.className = 'status error';
+                statusDiv.style.display = 'block';
+                statusDiv.textContent = '✕ Connection error.';
+            });
+        }
+
+        document.getElementById('winRedBtn').addEventListener('click',  () => setMatchResult('red'));
+        document.getElementById('winTieBtn').addEventListener('click',  () => setMatchResult(''));
+        document.getElementById('winBlueBtn').addEventListener('click', () => setMatchResult('blue'));
 
         // ── LIVE LOG FETCHING ──
         function fetchLogs() {
@@ -1072,7 +1213,10 @@ F1-1,1234,5678,9012,3456,7890,1122</code>
         }
         function formatMatchNameJS(m) {
             if (!m) return '';
-            if (m.comp_level === 'qm') return `QM${m.match_number}`;
+            if (m.custom_name) return m.custom_name;
+            if (m.comp_level === 'qm') return `Qualification Match ${m.match_number}`;
+            if (m.comp_level === 'sf') return `Semifinal ${m.set_number} Match ${m.match_number}`;
+            if (m.comp_level === 'f')  return `Finals Match ${m.match_number}`;
             return `${m.comp_level.toUpperCase()}${m.set_number}-${m.match_number}`;
         }
 
@@ -1099,6 +1243,25 @@ F1-1,1234,5678,9012,3456,7890,1122</code>
 
         // ══ TEAMS TAB ══
 
+        const expandedTeams = new Set();
+
+        function buildTeamMatchMap() {
+            const map = {};
+            for (const [key, m] of Object.entries(matchesState)) {
+                for (const side of ['red', 'blue']) {
+                    for (const tk of (m.alliances?.[side]?.team_keys || [])) {
+                        if (!map[tk]) map[tk] = [];
+                        map[tk].push({ key, side, match: m });
+                    }
+                }
+            }
+            // sort each team's matches by time
+            for (const tk of Object.keys(map)) {
+                map[tk].sort((a, b) => (a.match.time || 0) - (b.match.time || 0));
+            }
+            return map;
+        }
+
         document.getElementById('teamFilter').addEventListener('input', e => renderTeamTable(e.target.value));
 
         function renderTeamTable(filter = '') {
@@ -1110,12 +1273,21 @@ F1-1,1234,5678,9012,3456,7890,1122</code>
             keys.sort((a, b) => teamsState[a].team_number - teamsState[b].team_number);
             document.getElementById('teamCount').textContent = `${keys.length} team${keys.length !== 1 ? 's' : ''}`;
 
+            const teamMatchMap = buildTeamMatchMap();
             const tbody = document.getElementById('teamTableBody');
-            tbody.innerHTML = keys.map(k => {
+
+            tbody.innerHTML = keys.flatMap(k => {
                 const t = teamsState[k];
                 const id = k.replace('frc', '');
-                return `<tr id="row-${id}">
-                    <td>${t.team_number}</td>
+                const isExpanded = expandedTeams.has(k);
+                const matchCount = (teamMatchMap[k] || []).length;
+                const expandIcon = isExpanded ? '▾' : '▸';
+
+                const mainRow = `<tr id="row-${id}">
+                    <td style="white-space:nowrap;">
+                        <button class="btn-tbl btn-tbl-expand" data-key="${k}" title="${matchCount} match(es)">${expandIcon}</button>
+                        ${t.team_number}
+                    </td>
                     <td>${escHtml(t.team_name)}</td>
                     <td>${t.epa}</td>
                     <td>${t.avg_auto_score}</td>
@@ -1125,10 +1297,51 @@ F1-1,1234,5678,9012,3456,7890,1122</code>
                     <td>${escHtml(t.event_wlt)}</td>
                     <td><button class="btn-tbl btn-tbl-edit" data-key="${k}">Edit</button></td>
                 </tr>`;
+
+                const matchRows = isExpanded ? `<tr class="team-matches-row" id="matches-row-${id}">
+                    <td colspan="9">
+                        <div class="team-matches-inner">
+                            ${matchCount === 0 ? '<span style="color:var(--text-muted)">No matches found</span>' :
+                            `<table>${(teamMatchMap[k] || []).map(({ key, side, match }) => {
+                                const partners = (match.alliances[side].team_keys || [])
+                                    .filter(tk => tk !== k)
+                                    .map(tk => tk.replace('frc',''))
+                                    .join(', ') || '—';
+                                const w = match.winning_alliance;
+                                let resultPill = '';
+                                if (w === null || w === undefined) {
+                                    resultPill = '<span style="color:var(--text-muted);font-size:10px;">—</span>';
+                                } else if (w === '') {
+                                    resultPill = '<span style="font-size:10px;font-weight:700;color:#aaaaaa;letter-spacing:0.06em;">TIE</span>';
+                                } else if (w === side) {
+                                    resultPill = '<span style="font-size:10px;font-weight:700;color:#44dd66;letter-spacing:0.06em;">WIN</span>';
+                                } else {
+                                    resultPill = '<span style="font-size:10px;font-weight:700;color:#ee5555;letter-spacing:0.06em;">LOSS</span>';
+                                }
+                                return `<tr>
+                                    <td>${escHtml(formatMatchNameJS(match))}</td>
+                                    <td><span class="alliance-pill ${side}">${side}</span></td>
+                                    <td>${resultPill}</td>
+                                    <td>with ${escHtml(partners)}</td>
+                                </tr>`;
+                            }).join('')}</table>`}
+                        </div>
+                    </td>
+                </tr>` : '';
+
+                return [mainRow, matchRows];
             }).join('');
 
             tbody.querySelectorAll('.btn-tbl-edit').forEach(btn => {
                 btn.addEventListener('click', () => startEditTeam(btn.dataset.key));
+            });
+            tbody.querySelectorAll('.btn-tbl-expand').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const k = btn.dataset.key;
+                    if (expandedTeams.has(k)) expandedTeams.delete(k);
+                    else expandedTeams.add(k);
+                    renderTeamTable(document.getElementById('teamFilter').value);
+                });
             });
         }
 
@@ -1203,6 +1416,7 @@ F1-1,1234,5678,9012,3456,7890,1122</code>
             const blue = m.alliances.blue.team_keys;
             ['red1','red2','red3'].forEach((id, i) => document.getElementById(id).value = red[i] ? red[i].replace('frc','') : '');
             ['blue1','blue2','blue3'].forEach((id, i) => document.getElementById(id).value = blue[i] ? blue[i].replace('frc','') : '');
+            document.getElementById('rosterTitle').value = m.custom_name || '';
         }
 
         document.getElementById('rosterMatchSelect').addEventListener('change', e => loadRoster(e.target.value));
@@ -1213,21 +1427,31 @@ F1-1,1234,5678,9012,3456,7890,1122</code>
 
             const red_keys  = ['red1','red2','red3'].map(id => document.getElementById(id).value.trim()).filter(Boolean);
             const blue_keys = ['blue1','blue2','blue3'].map(id => document.getElementById(id).value.trim()).filter(Boolean);
+            const title = document.getElementById('rosterTitle').value.trim();
 
-            fetch('/api/edit/match_roster', {
+            const rosterSave = fetch('/api/edit/match_roster', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ match_key: matchKey, red_keys, blue_keys })
-            })
-            .then(r => r.json())
-            .then(data => {
-                if (data.status === 'success') {
+            });
+            const titleSave = fetch('/api/edit/match_title', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ match_key: matchKey, title })
+            });
+
+            Promise.all([rosterSave, titleSave])
+            .then(rs => Promise.all(rs.map(r => r.json())))
+            .then(([rosterData]) => {
+                if (rosterData.status === 'success') {
                     const norm = k => k.startsWith('frc') ? k : `frc${k}`;
                     matchesState[matchKey].alliances.red.team_keys  = red_keys.map(norm);
                     matchesState[matchKey].alliances.blue.team_keys = blue_keys.map(norm);
-                    showRosterStatus('success', '✓ Roster saved.');
+                    matchesState[matchKey].custom_name = title;
+                    showRosterStatus('success', '✓ Saved.');
+                    populateRosterMatchSelect();
                 } else {
-                    showRosterStatus('error', '✕ ' + data.message);
+                    showRosterStatus('error', '✕ ' + rosterData.message);
                 }
             })
             .catch(() => showRosterStatus('error', '✕ Connection error.'));
