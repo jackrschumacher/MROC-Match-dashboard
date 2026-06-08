@@ -776,6 +776,103 @@
         .modal-sm { max-width: 440px; height: auto; min-height: 0; }
         .modal-sm .modal-body-plain { padding: 22px 22px 18px; }
         .modal-sm input, .modal-sm select { margin-bottom: 14px; }
+
+        /* ══════════════════════════════════════
+           ACTIVE MATCH DISPLAY
+        ══════════════════════════════════════ */
+        .match-title-display {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            color: var(--text-secondary);
+            letter-spacing: 0.06em;
+            margin-bottom: 12px;
+        }
+        .match-alliances {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        .alliance-block {
+            border-radius: 4px;
+            padding: 12px 14px;
+        }
+        .alliance-block.red  { background: rgba(180,40,40,0.10); border: 1px solid #441a1a; }
+        .alliance-block.blue { background: rgba(40,80,200,0.10); border: 1px solid #1a2a55; }
+        .alliance-block-label {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+        .alliance-block.red  .alliance-block-label { color: #ee5555; }
+        .alliance-block.blue .alliance-block-label { color: #5588ee; }
+        .alliance-team {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+            padding: 4px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .alliance-team:last-child { border-bottom: none; }
+        .alliance-team-num {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-heading);
+            min-width: 44px;
+        }
+        .alliance-team-name {
+            font-size: 12px;
+            color: var(--text-secondary);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .no-content-msg {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 12px;
+            color: var(--text-muted);
+            text-align: center;
+            padding: 14px 0;
+        }
+
+        /* ══════════════════════════════════════
+           RECENT MATCHES
+        ══════════════════════════════════════ */
+        .match-history-item {
+            display: grid;
+            grid-template-columns: minmax(120px,auto) 1fr 1fr auto;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 10px;
+            background: var(--bg-raised);
+            border: 1px solid var(--border-subtle);
+            border-radius: 4px;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            margin-bottom: 6px;
+        }
+        .match-history-item:last-child { margin-bottom: 0; }
+        .match-history-name { color: var(--text-secondary); white-space: nowrap; }
+        .match-history-teams { color: var(--text-primary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .score-red  { color: #ee5555; }
+        .score-blue { color: #5588ee; }
+        .match-history-score { white-space: nowrap; font-size: 12px; font-weight: 700; }
+        .winner-badge {
+            display: inline-block;
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            padding: 1px 5px;
+            border-radius: 3px;
+            text-transform: uppercase;
+            vertical-align: middle;
+        }
+        .winner-badge.red  { background: rgba(180,40,40,0.25); color: #ee5555; border: 1px solid #441a1a; }
+        .winner-badge.blue { background: rgba(40,80,200,0.25); color: #5588ee; border: 1px solid #1a2a55; }
+        .winner-badge.tie  { background: var(--bg-raised); color: var(--text-muted); border: 1px solid var(--border-mid); }
     </style>
 </head>
 <body>
@@ -834,6 +931,28 @@
                     <button type="button" class="result-btn result-btn-tie"  id="winTieBtn" style="flex:0 0 auto; padding-left:14px; padding-right:14px;">Tie</button>
                 </div>
                 <div id="resultStatus" class="status"></div>
+            </div>
+
+            <!-- ACTIVE MATCH DISPLAY -->
+            <div class="card">
+                <div class="card-title">
+                    <h2>Active Match</h2>
+                </div>
+                <div class="divider"></div>
+                <div id="activeMatchDisplay">
+                    <div class="no-content-msg">No active match set</div>
+                </div>
+            </div>
+
+            <!-- RECENT MATCHES -->
+            <div class="card">
+                <div class="card-title">
+                    <h2>Recent Matches</h2>
+                </div>
+                <div class="divider"></div>
+                <div id="recentMatchesList">
+                    <div class="no-content-msg">No completed matches</div>
+                </div>
             </div>
 
         </div>
@@ -983,25 +1102,33 @@ F1-1,1234,5678,9012,3456,7890,1122</code>
             document.getElementById('lastUpdatedTime').textContent = saved || 'Never';
         })();
 
-        // ── LOG TOGGLE ──
+        // ── LOG TOGGLE (persisted) ──
         const rightPanel = document.getElementById('rightPanel');
         const logContainer = document.getElementById('log-container');
         const toggleLogsBtn = document.getElementById('toggleLogsBtn');
         const logBtnText = document.getElementById('logBtnText');
-        let logsVisible = false;
+        let logsVisible = localStorage.getItem('frc_logs_visible') === 'true';
 
-        toggleLogsBtn.addEventListener('click', function () {
-            logsVisible = !logsVisible;
+        function applyLogVisibility(animate) {
             if (logsVisible) {
                 rightPanel.classList.add('visible');
                 logBtnText.textContent = 'Hide Logs';
                 toggleLogsBtn.classList.add('active');
-                setTimeout(() => { logContainer.scrollTop = logContainer.scrollHeight; }, 320);
+                if (animate) setTimeout(() => { logContainer.scrollTop = logContainer.scrollHeight; }, 320);
+                else logContainer.scrollTop = logContainer.scrollHeight;
             } else {
                 rightPanel.classList.remove('visible');
                 logBtnText.textContent = 'Show Logs';
                 toggleLogsBtn.classList.remove('active');
             }
+        }
+
+        applyLogVisibility(false);
+
+        toggleLogsBtn.addEventListener('click', function () {
+            logsVisible = !logsVisible;
+            localStorage.setItem('frc_logs_visible', logsVisible);
+            applyLogVisibility(true);
         });
 
         // ── EVENT SETUP MODAL ──
@@ -1497,6 +1624,74 @@ F1-1,1234,5678,9012,3456,7890,1122</code>
             el.textContent = msg;
             if (type === 'success') setTimeout(() => { el.style.display = 'none'; }, 3000);
         }
+
+        // ── ACTIVE MATCH DISPLAY ──
+        function renderActiveMatch() {
+            fetch('/api/active_match.json')
+                .then(r => r.json())
+                .then(data => {
+                    const el = document.getElementById('activeMatchDisplay');
+                    if (data.error) {
+                        el.innerHTML = '<div class="no-content-msg">No active match set</div>';
+                        return;
+                    }
+                    el.innerHTML = `
+                        <div class="match-title-display">${escHtml(data.match_name)}</div>
+                        <div class="match-alliances">
+                            <div class="alliance-block red">
+                                <div class="alliance-block-label">Red Alliance</div>
+                                <div class="alliance-team"><span class="alliance-team-num">${data.red_1}</span><span class="alliance-team-name">${escHtml(data.red_1_name || '')}</span></div>
+                                <div class="alliance-team"><span class="alliance-team-num">${data.red_2}</span><span class="alliance-team-name">${escHtml(data.red_2_name || '')}</span></div>
+                                <div class="alliance-team"><span class="alliance-team-num">${data.red_3}</span><span class="alliance-team-name">${escHtml(data.red_3_name || '')}</span></div>
+                            </div>
+                            <div class="alliance-block blue">
+                                <div class="alliance-block-label">Blue Alliance</div>
+                                <div class="alliance-team"><span class="alliance-team-num">${data.blue_1}</span><span class="alliance-team-name">${escHtml(data.blue_1_name || '')}</span></div>
+                                <div class="alliance-team"><span class="alliance-team-num">${data.blue_2}</span><span class="alliance-team-name">${escHtml(data.blue_2_name || '')}</span></div>
+                                <div class="alliance-team"><span class="alliance-team-num">${data.blue_3}</span><span class="alliance-team-name">${escHtml(data.blue_3_name || '')}</span></div>
+                            </div>
+                        </div>`;
+                })
+                .catch(() => {});
+        }
+        setInterval(renderActiveMatch, 5000);
+        renderActiveMatch();
+
+        // ── RECENT MATCHES ──
+        function renderRecentMatches() {
+            const completed = Object.values(matchesState)
+                .filter(m => m.actual_time)
+                .sort((a, b) => b.actual_time - a.actual_time)
+                .slice(0, 10);
+
+            const el = document.getElementById('recentMatchesList');
+            if (!completed.length) {
+                el.innerHTML = '<div class="no-content-msg">No completed matches</div>';
+                return;
+            }
+
+            el.innerHTML = completed.map(m => {
+                const red  = m.alliances.red.team_keys.map(k => k.replace('frc', '')).join(' · ');
+                const blue = m.alliances.blue.team_keys.map(k => k.replace('frc', '')).join(' · ');
+                const rs = m.alliances.red.score  ?? '?';
+                const bs = m.alliances.blue.score ?? '?';
+                const w = m.winning_alliance;
+                const winClass = w === 'red' ? 'red' : w === 'blue' ? 'blue' : 'tie';
+                const winLabel = w === 'red' ? 'Red' : w === 'blue' ? 'Blue' : 'Tie';
+                return `<div class="match-history-item">
+                    <span class="match-history-name">${escHtml(formatMatchNameJS(m))}</span>
+                    <span class="match-history-teams"><span class="score-red">▣</span> ${escHtml(red)}</span>
+                    <span class="match-history-teams"><span class="score-blue">▣</span> ${escHtml(blue)}</span>
+                    <span class="match-history-score">
+                        <span class="score-red">${rs}</span>
+                        <span style="color:var(--text-muted);font-weight:400;font-size:11px;"> – </span>
+                        <span class="score-blue">${bs}</span>
+                        &nbsp;<span class="winner-badge ${winClass}">${winLabel}</span>
+                    </span>
+                </div>`;
+            }).join('');
+        }
+        renderRecentMatches();
     </script>
 </body>
 </html>
