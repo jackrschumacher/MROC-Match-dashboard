@@ -3,11 +3,15 @@ import json
 import requests
 from datetime import datetime
 from flask import Flask, render_template, jsonify, request
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = Flask(__name__)
+app.config['JSON_SORT_KEYS'] = False
 
 # --- CONFIGURATION ---
-TBA_API_KEY = " "  # Keep your API key here
+TBA_API_KEY = os.environ.get("TBA_API_KEY", "") # Loading the API key from .env for security
 TEAMS_FILE = "teams.json"
 MATCHES_FILE = "matches.json"
 
@@ -358,8 +362,9 @@ def set_active_match():
     add_log(f"ERROR: Invalid match key attempted: {match_key}")
     return jsonify({"status": "error", "message": "Invalid match key"}), 400
 
-# --- api ENDPOINTS ---
+# --- API ENDPOINTS ---
 
+# Endpoint for the active match
 @app.route("/api/active_match.json")
 def api_active_match():
     matches_data = load_matches()
@@ -373,6 +378,9 @@ def api_active_match():
     
     def get_epa(team_key):
         return teams_data.get(team_key, {}).get("epa", 0.0)
+    
+    def get_team_name(team_key):
+        return teams_data.get(team_key, {}).get("team_name", "")
 
     red_keys = match["alliances"]["red"]["team_keys"]
     blue_keys = match["alliances"]["blue"]["team_keys"]
@@ -381,18 +389,24 @@ def api_active_match():
         "match_name": format_match_name(match),
         
         "red_1": red_keys[0].replace("frc", ""),
+        "red_1_name": get_team_name(red_keys[0]),
         "red_1_epa": get_epa(red_keys[0]),
         "red_2": red_keys[1].replace("frc", ""),
+        "red_2_name": get_team_name(red_keys[1]),
         "red_2_epa": get_epa(red_keys[1]),
         "red_3": red_keys[2].replace("frc", ""),
+        "red_3_name": get_team_name(red_keys[2]),
         "red_3_epa": get_epa(red_keys[2]),
         "red_score": match["alliances"]["red"].get("score", 0),
         
         "blue_1": blue_keys[0].replace("frc", ""),
+        "blue_1_name": get_team_name(blue_keys[0]),
         "blue_1_epa": get_epa(blue_keys[0]),
         "blue_2": blue_keys[1].replace("frc", ""),
+        "blue_2_name": get_team_name(blue_keys[1]),
         "blue_2_epa": get_epa(blue_keys[1]),
         "blue_3": blue_keys[2].replace("frc", ""),
+        "blue_3_name": get_team_name(blue_keys[2]),
         "blue_3_epa": get_epa(blue_keys[2]),
         "blue_score": match["alliances"]["blue"].get("score", 0),
     }
