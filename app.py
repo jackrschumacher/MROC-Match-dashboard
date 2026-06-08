@@ -7,7 +7,7 @@ from flask import Flask, render_template, jsonify, request
 app = Flask(__name__)
 
 # --- CONFIGURATION ---
-TBA_API_KEY = ""  # Keep your API key here
+TBA_API_KEY = " "  # Keep your API key here
 TEAMS_FILE = "teams.json"
 MATCHES_FILE = "matches.json"
 
@@ -19,7 +19,7 @@ def add_log(message):
     log_entry = f"[{timestamp}] {message}"
     print(log_entry)
     server_logs.append(log_entry)
-    if len(server_logs) > 300:
+    if len(server_logs) > 500:
         server_logs.pop(0)
 
 # --- DATA MANAGEMENT ---
@@ -90,7 +90,7 @@ def sync_event_data(event_key):
     
     if matches is None or teams is None:
         add_log(f"ERROR: Failed to fetch TBA data for {event_key}.")
-        return False, f"Failed to fetch data for {event_key}. Check your key and TBA API key."
+        return False, f"Failed to fetch data for {event_key}. Check your event key and TBA API key."
     
     year = event_key[:4]
     matches_data = load_matches()
@@ -123,8 +123,8 @@ def sync_event_data(event_key):
             score_data = (m.get("score_breakdown") or {}).get(alliance, {})
             
             # FIX: Fallback to multiple possible TBA keys if they change it this year
-            auto_pts = score_data.get("autoPoints", score_data.get("auto_points", 0))
-            teleop_pts = score_data.get("teleopPoints", score_data.get("teleop_points", 0))
+            auto_pts = score_data.get("totalAutoPoints", score_data.get("autoPoints", score_data.get("auto_points", 0)))
+            teleop_pts = score_data.get("totalTeleopPoints", score_data.get("teleopPoints", score_data.get("teleop_points", 0)))
             
             for tk in m["alliances"][alliance]["team_keys"]:
                 if tk in team_stats:
@@ -236,6 +236,20 @@ def control_panel():
     data = {**matches_data, "event_teams": teams_data}
     return render_template("control.html", data=data)
 
+@app.route("/api/debug/match_breakdown")
+def debug_match_breakdown():
+    """Return the score_breakdown keys from the first played match — shows what TBA actually sends."""
+    matches_data = load_matches()
+    for key, m in matches_data.get("event_matches", {}).items():
+        if m.get("actual_time") and m.get("score_breakdown"):
+            return jsonify({
+                "match_key": key,
+                "red_keys": list((m["score_breakdown"].get("red") or {}).keys()),
+                "blue_keys": list((m["score_breakdown"].get("blue") or {}).keys()),
+                "red_sample": m["score_breakdown"].get("red"),
+            })
+    return jsonify({"error": "No played matches with score_breakdown found. TBA may not have posted breakdowns yet."})
+
 @app.route("/api/debug/statbotics/<int:team_number>")
 def debug_statbotics(team_number):
     """Hit Statbotics for a single team and return the raw response — useful for diagnosing EPA=0 issues."""
@@ -243,7 +257,7 @@ def debug_statbotics(team_number):
     year = (matches_data.get("event_key") or "2026")[:4]
     team_key = f"frc{team_number}"
     add_log(f"[DEBUG] Fetching raw Statbotics data for {team_number} (year={year})")
-    raw = fetch_statbotics_epa(team_key, year, verbose=True)
+    raw = fetch_statbotics_epa(team_key, year)
     epa_obj = raw.get("epa") or {}
     return jsonify({
         "team": team_number,
@@ -306,7 +320,10 @@ def vmix_active_match():
     blue_keys = match["alliances"]["blue"]["team_keys"]
     
     output = {
-        "match_name": match["comp_level"].upper() + str(match["match_number"]),
+        "match_name": (
+            f"QM{match['match_number']}" if match["comp_level"] == "qm"
+            else f"{match['comp_level'].upper()}{match['set_number']}-{match['match_number']}"
+        ),
         
         "red_1": red_keys[0].replace("frc", ""),
         "red_1_epa": get_epa(red_keys[0]),
@@ -368,6 +385,138 @@ def vmix_h2h(team_a_number, team_b_number):
     }
     
     return jsonify(output)
+
+# --- QUICK SYNC & IMPORT ---
+
+@app.route("/api/sync_current", methods=["POST"])
+def api_sync_current():
+    matches_data = load_matches()
+    event_key = matches_data.get("event_key", "")
+    if not event_key:
+        return jsonify({"status": "error", "message": "No event key configured. Use Event Setup first."}), 400
+    success, message = sync_event_data(event_key)
+    if success:
+        return jsonify({"status": "success", "message": message})
+    return jsonify({"status": "error", "message": message}), 500
+
+@app.route("/api/import/schedule", methods=["POST"])
+def api_import_schedule():
+    import csv, io
+    csv_text = request.form.get("csv_data", "").strip()
+    if not csv_text:
+        return jsonify({"status": "error", "message": "No CSV data provided"}), 400
+
+    matches_data = load_matches()
+    event_key = matches_data.get("event_key", "")
+    if not event_key:
+        return jsonify({"status": "error", "message": "No event key set. Configure it in Event Setup first."}), 400
+
+    def parse_match_id(s):
+        s = s.strip().upper().replace("M", "-")
+        if s.startswith("SF"):
+            parts = s[2:].split("-")
+            return "sf", int(parts[0]), int(parts[1]) if len(parts) > 1 else 1
+        elif s.startswith("F"):
+            parts = s[1:].split("-")
+            return "f", int(parts[0]), int(parts[1]) if len(parts) > 1 else 1
+        else:
+            num = s.replace("QM", "").replace("-", "")
+            return "qm", 1, int(num)
+
+    def norm(t):
+        t = t.strip()
+        return None if not t else (t if t.startswith("frc") else f"frc{t}")
+
+    reader = csv.DictReader(io.StringIO(csv_text))
+    imported, errors = 0, []
+
+    for i, row in enumerate(reader):
+        row = {k.strip().lower(): v.strip() for k, v in row.items()}
+        match_str = row.get("match", row.get("match_number", ""))
+        if not match_str:
+            errors.append(f"row {i+2}: missing match id")
+            continue
+        try:
+            comp_level, set_num, match_num = parse_match_id(match_str)
+        except Exception:
+            errors.append(f"row {i+2}: bad match id '{match_str}'")
+            continue
+
+        red_keys  = [k for k in [norm(row.get("red1","")), norm(row.get("red2","")), norm(row.get("red3",""))] if k]
+        blue_keys = [k for k in [norm(row.get("blue1","")), norm(row.get("blue2","")), norm(row.get("blue3",""))] if k]
+
+        suffix = f"qm{match_num}" if comp_level == "qm" else f"{comp_level}{set_num}m{match_num}"
+        match_key = f"{event_key}_{suffix}"
+
+        existing = matches_data["event_matches"].get(match_key, {})
+        existing_alliances = existing.get("alliances", {})
+        matches_data["event_matches"][match_key] = {
+            **existing,
+            "key": match_key,
+            "comp_level": comp_level,
+            "set_number": set_num,
+            "match_number": match_num,
+            "alliances": {
+                "red":  {**existing_alliances.get("red",  {}), "team_keys": red_keys,  "score": existing_alliances.get("red",  {}).get("score", -1)},
+                "blue": {**existing_alliances.get("blue", {}), "team_keys": blue_keys, "score": existing_alliances.get("blue", {}).get("score", -1)},
+            },
+            "time": existing.get("time"),
+            "actual_time": existing.get("actual_time"),
+            "winning_alliance": existing.get("winning_alliance"),
+            "score_breakdown": existing.get("score_breakdown"),
+        }
+        imported += 1
+
+    save_matches(matches_data)
+    add_log(f"CSV import: {imported} matches imported for {event_key}")
+    msg = f"Imported {imported} match(es)."
+    if errors:
+        msg += " Errors: " + "; ".join(errors[:3])
+    return jsonify({"status": "success", "message": msg, "imported": imported})
+
+@app.route("/api/reset/schedule", methods=["POST"])
+def api_reset_schedule():
+    matches_data = load_matches()
+    count = len(matches_data.get("event_matches", {}))
+    matches_data["event_matches"] = {}
+    matches_data["current_match"] = ""
+    save_matches(matches_data)
+    add_log(f"Schedule reset: cleared {count} matches")
+    return jsonify({"status": "success", "cleared": count})
+
+# --- MANUAL EDIT ENDPOINTS ---
+
+@app.route("/api/edit/team", methods=["POST"])
+def api_edit_team():
+    payload = request.get_json()
+    team_key = payload.get("team_key")
+    updates = payload.get("updates", {})
+    teams_data = load_teams()
+    if team_key not in teams_data:
+        return jsonify({"status": "error", "message": "Team not found"}), 404
+    allowed = {"team_name", "epa", "avg_auto_score", "avg_teleop_score", "avg_match_score", "season_wlt", "event_wlt"}
+    teams_data[team_key].update({k: v for k, v in updates.items() if k in allowed})
+    save_teams(teams_data)
+    add_log(f"Manual edit: updated {team_key}")
+    return jsonify({"status": "success"})
+
+@app.route("/api/edit/match_roster", methods=["POST"])
+def api_edit_match_roster():
+    payload = request.get_json()
+    match_key = payload.get("match_key")
+    red_keys = payload.get("red_keys", [])
+    blue_keys = payload.get("blue_keys", [])
+    matches_data = load_matches()
+    if match_key not in matches_data.get("event_matches", {}):
+        return jsonify({"status": "error", "message": "Match not found"}), 404
+    def normalize(k):
+        k = str(k).strip()
+        return k if k.startswith("frc") else f"frc{k}"
+    matches_data["event_matches"][match_key]["alliances"]["red"]["team_keys"] = [normalize(k) for k in red_keys]
+    matches_data["event_matches"][match_key]["alliances"]["blue"]["team_keys"] = [normalize(k) for k in blue_keys]
+    save_matches(matches_data)
+    add_log(f"Manual edit: updated roster for {match_key}")
+    return jsonify({"status": "success"})
 
 # --- STARTUP ROUTINE ---
 

@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
     <title>FRC Graphics Control Panel</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap');
@@ -13,27 +14,27 @@
            CSS VARIABLES — DARK (default)
         ══════════════════════════════════════ */
         :root {
-            --bg-base:        #080810;
-            --bg-surface:     #0e0e1c;
-            --bg-raised:      #13132a;
-            --bg-input:       #0a0a18;
-            --bg-log:         #050508;
-            --bg-btn:         #14143a;
-            --bg-btn-hover:   #1c1c4a;
+            --bg-base:        #000000;
+            --bg-surface:     #111111;
+            --bg-raised:      #1a1a1a;
+            --bg-input:       #080808;
+            --bg-log:         #030303;
+            --bg-btn:         #061530;
+            --bg-btn-hover:   #0a2248;
 
-            --border-subtle:  #1a1a30;
-            --border-mid:     #252545;
-            --border-accent:  #3a3aaa;
-            --border-focus:   #5555cc;
+            --border-subtle:  #1e1e1e;
+            --border-mid:     #2a2a2a;
+            --border-accent:  #0d3575;
+            --border-focus:   #1a5bc7;
 
-            --text-primary:   #dcdcf0;
-            --text-secondary: #8888aa;
-            --text-muted:     #484868;
-            --text-label:     #606090;
-            --text-accent:    #7777dd;
-            --text-btn:       #9999ee;
-            --text-btn-hover: #bbbbff;
-            --text-heading:   #e8e8ff;
+            --text-primary:   #e8e8e8;
+            --text-secondary: #888888;
+            --text-muted:     #484848;
+            --text-label:     #606060;
+            --text-accent:    #4a7fd4;
+            --text-btn:       #6b9fe8;
+            --text-btn-hover: #90baf5;
+            --text-heading:   #ffffff;
             --text-log:       #22cc44;
             --text-log-dim:   #1a9933;
 
@@ -43,15 +44,15 @@
             --status-err-bg:  #1f0a0a;
             --status-err-text:#ee5555;
             --status-err-bdr: #441a1a;
-            --status-pnd-bg:  #0d0a1f;
-            --status-pnd-text:#8888cc;
-            --status-pnd-bdr: #242448;
+            --status-pnd-bg:  #06152a;
+            --status-pnd-text:#6b9fe8;
+            --status-pnd-bdr: #0d3575;
 
-            --scrollbar-thumb: #252545;
+            --scrollbar-thumb: #2a2a2a;
             --scrollbar-log:   #1a3320;
 
-            --accent-hex:     #4444bb;
-            --shadow:         0 2px 12px rgba(0,0,0,0.5);
+            --accent-hex:     #041e52;
+            --shadow:         0 2px 12px rgba(0,0,0,0.7);
         }
 
         /* ══════════════════════════════════════
@@ -436,23 +437,274 @@
             background: var(--border-subtle);
             margin: 0 0 18px 0;
         }
+        /* ══════════════════════════════════════
+           BUTTON — PRIMARY (non-form)
+        ══════════════════════════════════════ */
+        .btn-primary {
+            display: block;
+            width: 100%;
+            padding: 11px;
+            background: var(--bg-btn);
+            border: 1px solid var(--border-accent);
+            color: var(--text-btn);
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            transition: all 0.15s ease;
+            text-align: center;
+        }
+        .btn-primary:hover { background: var(--bg-btn-hover); border-color: var(--border-focus); color: var(--text-btn-hover); }
+        .btn-primary:active { transform: translateY(1px); }
+
+        /* ══════════════════════════════════════
+           MODAL / DATA EDITOR
+        ══════════════════════════════════════ */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.72);
+            z-index: 200;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-overlay.visible { display: flex; }
+
+        .modal {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-mid);
+            border-radius: 8px;
+            width: 92vw;
+            max-width: 1080px;
+            height: 84vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 12px 48px rgba(0,0,0,0.65);
+            overflow: hidden;
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 22px;
+            border-bottom: 1px solid var(--border-subtle);
+            flex-shrink: 0;
+        }
+        .modal-header h2 {
+            margin: 0;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--text-heading);
+        }
+        .modal-close {
+            background: none;
+            border: 1px solid var(--border-mid);
+            color: var(--text-secondary);
+            cursor: pointer;
+            width: 28px;
+            height: 28px;
+            border-radius: 4px;
+            font-size: 17px;
+            line-height: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.13s;
+            padding: 0;
+        }
+        .modal-close:hover { background: var(--bg-raised); color: var(--text-primary); border-color: var(--border-accent); }
+
+        .modal-tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border-subtle);
+            padding: 0 22px;
+            flex-shrink: 0;
+            gap: 2px;
+        }
+        .modal-tab {
+            padding: 10px 16px;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            cursor: pointer;
+            border: none;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -1px;
+            background: none;
+            transition: all 0.13s;
+        }
+        .modal-tab:hover { color: var(--text-secondary); }
+        .modal-tab.active { color: var(--text-accent); border-bottom-color: var(--border-focus); }
+
+        .modal-body { flex: 1; overflow: hidden; display: flex; flex-direction: column; }
+
+        .tab-pane { display: none; flex: 1; overflow: hidden; flex-direction: column; padding: 18px 22px; }
+        .tab-pane.active { display: flex; }
+
+        /* ── Team editor ── */
+        .editor-toolbar {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            margin-bottom: 12px;
+            flex-shrink: 0;
+        }
+        .editor-toolbar input { max-width: 240px; margin: 0; padding: 8px 11px; font-size: 12px; }
+        .editor-count { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--text-muted); }
+
+        .team-table-wrap {
+            flex: 1;
+            overflow-y: auto;
+            border: 1px solid var(--border-subtle);
+            border-radius: 4px;
+        }
+        .team-table-wrap::-webkit-scrollbar { width: 4px; }
+        .team-table-wrap::-webkit-scrollbar-track { background: transparent; }
+        .team-table-wrap::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 2px; }
+
+        .team-table { width: 100%; border-collapse: collapse; font-family: 'IBM Plex Mono', monospace; font-size: 12px; }
+        .team-table th {
+            position: sticky; top: 0;
+            background: var(--bg-raised);
+            padding: 8px 10px;
+            text-align: left;
+            font-size: 10px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--text-label);
+            border-bottom: 1px solid var(--border-mid);
+            font-weight: 700;
+            white-space: nowrap;
+        }
+        .team-table td {
+            padding: 6px 10px;
+            border-bottom: 1px solid var(--border-subtle);
+            color: var(--text-primary);
+            vertical-align: middle;
+            white-space: nowrap;
+        }
+        .team-table tr:last-child td { border-bottom: none; }
+        .team-table tbody tr:hover td { background: var(--bg-raised); }
+        .team-table tr.editing td { background: var(--bg-raised); }
+        .team-table td input { padding: 4px 7px; font-size: 12px; margin: 0; width: 100%; min-width: 55px; }
+        .team-table td input[type="text"] { min-width: 110px; }
+
+        .btn-tbl { padding: 4px 10px; border-radius: 3px; font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; border: 1px solid var(--border-mid); transition: all 0.12s; }
+        .btn-tbl-edit { background: var(--bg-btn); color: var(--text-btn); }
+        .btn-tbl-edit:hover { background: var(--bg-btn-hover); color: var(--text-btn-hover); border-color: var(--border-accent); }
+        .btn-tbl-save { background: #0a1f0d; color: #44dd66; border-color: #1a4422; margin-right: 4px; }
+        .btn-tbl-save:hover { background: #0d2912; }
+        .btn-tbl-cancel { background: var(--bg-raised); color: var(--text-muted); }
+        .btn-tbl-cancel:hover { color: var(--text-primary); }
+
+        /* ── Match roster tab ── */
+        .roster-wrap { max-width: 580px; }
+        .roster-match-select { margin-bottom: 20px; }
+        .roster-match-select label { margin-bottom: 7px; }
+        .roster-alliances { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 18px; }
+        .roster-alliance h3 { font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; margin: 0 0 10px 0; }
+        .roster-alliance.red h3 { color: #ee5555; }
+        .roster-alliance.blue h3 { color: #5588ee; }
+        .roster-alliance label { margin-bottom: 5px; }
+        .roster-alliance input { margin-bottom: 10px; }
+        #rosterStatus { margin-top: 10px; }
+
+        /* ── CSV import tab ── */
+        .csv-hint {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+        }
+        .csv-hint code {
+            display: block;
+            margin-top: 6px;
+            padding: 8px 10px;
+            background: var(--bg-raised);
+            border: 1px solid var(--border-subtle);
+            border-radius: 3px;
+            color: var(--text-secondary);
+            white-space: pre;
+            font-size: 11px;
+        }
+        .csv-file-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+        .csv-file-row input[type="file"] { margin: 0; flex: 1; font-size: 11px; padding: 6px 8px; }
+        #csvTextarea {
+            width: 100%;
+            flex: 1;
+            resize: none;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            line-height: 1.6;
+            padding: 10px 12px;
+            border-radius: 4px;
+            border: 1px solid var(--border-mid);
+            background: var(--bg-input);
+            color: var(--text-primary);
+            margin-bottom: 12px;
+            outline: none;
+            box-sizing: border-box;
+        }
+        #csvTextarea:focus { border-color: var(--border-focus); }
+        #csvImportStatus { margin-top: 6px; }
+
+        /* ══════════════════════════════════════
+           TOP BAR BUTTONS
+        ══════════════════════════════════════ */
+        .topbar-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 14px;
+            background: var(--bg-btn);
+            border: 1px solid var(--border-mid);
+            color: var(--text-btn);
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            transition: all 0.15s ease;
+            white-space: nowrap;
+        }
+        .topbar-btn:hover { background: var(--bg-btn-hover); color: var(--text-btn-hover); border-color: var(--border-accent); }
+        .topbar-btn.active { border-color: var(--border-focus); color: var(--text-accent); }
+
+        /* ══════════════════════════════════════
+           SMALL MODAL (event setup)
+        ══════════════════════════════════════ */
+        .modal-sm { max-width: 440px; height: auto; min-height: 0; }
+        .modal-sm .modal-body-plain { padding: 22px 22px 18px; }
+        .modal-sm input, .modal-sm select { margin-bottom: 14px; }
     </style>
 </head>
 <body>
 
     <div class="top-bar">
         <div class="brand">
-            <svg class="brand-hex" viewBox="0 0 32 32">
-                <polygon points="16,3 29,9.5 29,22.5 16,29 3,22.5 3,9.5"/>
-            </svg>
+            <img src="{{ url_for('static', filename='favicon.ico') }}" alt="" width="28" height="28" style="flex-shrink:0;">
             <h1>FRC Graphics Control</h1>
         </div>
         <div class="top-bar-right">
             <div class="last-updated" id="lastUpdatedDisplay">
                 <span class="label">Last sync: </span><span class="value" id="lastUpdatedTime">Never</span>
             </div>
-            <div class="theme-badge" id="themeBadge">⬤ Dark</div>
-            <button id="toggleLogsBtn" type="button">
+            <button type="button" class="topbar-btn" id="syncNowBtn">↻ Sync</button>
+            <button type="button" class="topbar-btn" id="openEventSetupBtn">⚙ Event Setup</button>
+            <button type="button" class="topbar-btn" id="openEditorBtn">✎ Data Editor</button>
+            <button id="toggleLogsBtn" type="button" class="topbar-btn">
                 <span class="btn-icon">◧</span>
                 <span id="logBtnText">Show Logs</span>
             </button>
@@ -465,21 +717,6 @@
 
             <div class="card">
                 <div class="card-title">
-                    <span class="card-num">01</span>
-                    <h2>Event Configuration</h2>
-                </div>
-                <div class="divider"></div>
-                <form id="syncForm">
-                    <label for="event_key">TBA Event Key</label>
-                    <input type="text" id="event_key" name="event_key" value="{{ data.event_key }}" placeholder="e.g. 2026micmp" required>
-                    <button type="submit">↻ Synchronize Event Data</button>
-                </form>
-                <div id="syncStatus" class="status"></div>
-            </div>
-
-            <div class="card">
-                <div class="card-title">
-                    <span class="card-num">02</span>
                     <h2>Live Match Control</h2>
                 </div>
                 <div class="divider"></div>
@@ -487,9 +724,13 @@
                     <label for="match_key">Active Match</label>
                     <select id="match_key" name="match_key">
                         <option value="">— Select a Match —</option>
-                        {% for key, match in data.event_matches.items() | sort(attribute='1.time') %}
+                        {% for key, match in data.event_matches.items() | sort(attribute='1.time', reverse=False) %}
                             <option value="{{ key }}" {% if key == data.current_match %}selected{% endif %}>
-                                {{ match.comp_level.upper() }}{{ match.match_number }}
+                                {% if match.comp_level == 'qm' %}
+                                    QM{{ match.match_number }}
+                                {% else %}
+                                    {{ match.comp_level.upper() }}{{ match.set_number }}-{{ match.match_number }}
+                                {% endif %}
                             </option>
                         {% endfor %}
                     </select>
@@ -510,18 +751,122 @@
 
     </div>
 
+    <!-- ══ EVENT SETUP MODAL ══ -->
+    <div class="modal-overlay" id="eventSetupModal">
+        <div class="modal modal-sm">
+            <div class="modal-header">
+                <h2>Event Configuration</h2>
+                <button class="modal-close" id="closeEventSetupBtn">×</button>
+            </div>
+            <div class="modal-body-plain">
+                <form id="syncForm">
+                    <label for="event_key">TBA Event Key</label>
+                    <input type="text" id="event_key" name="event_key" value="{{ data.event_key }}" placeholder="e.g. 2026micmp" required>
+                    <button type="submit">↻ Synchronize Event Data</button>
+                </form>
+                <div id="syncStatus" class="status"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══ DATA EDITOR MODAL ══ -->
+    <div class="modal-overlay" id="editorModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>Data Editor</h2>
+                <button class="modal-close" id="closeEditorBtn">×</button>
+            </div>
+            <div class="modal-tabs">
+                <button class="modal-tab active" data-tab="teams">Teams</button>
+                <button class="modal-tab" data-tab="roster">Match Roster</button>
+                <button class="modal-tab" data-tab="schedule">Schedule Import</button>
+            </div>
+            <div class="modal-body">
+
+                <!-- TEAMS TAB -->
+                <div class="tab-pane active" id="tab-teams">
+                    <div class="editor-toolbar">
+                        <input type="text" id="teamFilter" placeholder="Filter by number or name…">
+                        <span class="editor-count" id="teamCount"></span>
+                    </div>
+                    <div class="team-table-wrap">
+                        <table class="team-table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Name</th>
+                                    <th>EPA</th>
+                                    <th>Avg Auto</th>
+                                    <th>Avg Teleop</th>
+                                    <th>Avg Score</th>
+                                    <th>Season W-L-T</th>
+                                    <th>Event W-L-T</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody id="teamTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- MATCH ROSTER TAB -->
+                <div class="tab-pane" id="tab-roster">
+                    <div class="roster-wrap">
+                        <div class="roster-match-select">
+                            <label>Select Match</label>
+                            <select id="rosterMatchSelect"></select>
+                        </div>
+                        <div class="roster-alliances">
+                            <div class="roster-alliance red">
+                                <h3>Red Alliance</h3>
+                                <label>Red 1</label>
+                                <input type="text" id="red1" placeholder="Team #">
+                                <label>Red 2</label>
+                                <input type="text" id="red2" placeholder="Team #">
+                                <label>Red 3</label>
+                                <input type="text" id="red3" placeholder="Team #">
+                            </div>
+                            <div class="roster-alliance blue">
+                                <h3>Blue Alliance</h3>
+                                <label>Blue 1</label>
+                                <input type="text" id="blue1" placeholder="Team #">
+                                <label>Blue 2</label>
+                                <input type="text" id="blue2" placeholder="Team #">
+                                <label>Blue 3</label>
+                                <input type="text" id="blue3" placeholder="Team #">
+                            </div>
+                        </div>
+                        <button type="button" class="btn-primary" id="saveRosterBtn">▶ Save Match Roster</button>
+                        <div id="rosterStatus" class="status"></div>
+                    </div>
+                </div>
+
+                <!-- SCHEDULE IMPORT TAB -->
+                <div class="tab-pane" id="tab-schedule">
+                    <div class="csv-hint">
+                        Paste or upload a CSV with columns: <strong>Match, Red1, Red2, Red3, Blue1, Blue2, Blue3</strong><br>
+                        Match formats: <code>QM1, QM12, SF1-1, SF2-3, F1-1, F1-2</code>
+                        <code>Match,Red1,Red2,Red3,Blue1,Blue2,Blue3
+QM1,1234,5678,9012,3456,7890,1122
+SF1-1,1234,5678,9012,3456,7890,1122
+F1-1,1234,5678,9012,3456,7890,1122</code>
+                    </div>
+                    <div class="csv-file-row">
+                        <input type="file" id="csvFileInput" accept=".csv,.txt">
+                    </div>
+                    <textarea id="csvTextarea" placeholder="…or paste CSV here"></textarea>
+                    <div style="display:flex; gap:10px; margin-bottom:0;">
+                        <button type="button" class="btn-primary" id="csvImportBtn" style="flex:1;">⬆ Import Schedule</button>
+                        <button type="button" class="btn-primary" id="clearScheduleBtn" style="flex:0 0 auto; border-color:#441a1a; color:#ee5555;">✕ Clear Schedule</button>
+                    </div>
+                    <div id="csvImportStatus" class="status"></div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
     <script>
-        // ── THEME DETECTION ──
-        const darkMQ = window.matchMedia('(prefers-color-scheme: dark)');
-        const themeBadge = document.getElementById('themeBadge');
-
-        function updateThemeBadge(isDark) {
-            themeBadge.textContent = isDark ? '⬤ Dark' : '◯ Light';
-        }
-
-        updateThemeBadge(darkMQ.matches);
-        darkMQ.addEventListener('change', e => updateThemeBadge(e.matches));
-
         // ── LAST UPDATED PERSISTENCE ──
         function setLastUpdated() {
             const now = new Date().toLocaleString('en-US', {
@@ -557,6 +902,12 @@
                 toggleLogsBtn.classList.remove('active');
             }
         });
+
+        // ── EVENT SETUP MODAL ──
+        const eventSetupModal = document.getElementById('eventSetupModal');
+        document.getElementById('openEventSetupBtn').addEventListener('click', () => eventSetupModal.classList.add('visible'));
+        document.getElementById('closeEventSetupBtn').addEventListener('click', () => eventSetupModal.classList.remove('visible'));
+        eventSetupModal.addEventListener('click', e => { if (e.target === eventSetupModal) eventSetupModal.classList.remove('visible'); });
 
         // ── SYNC FORM ──
         document.getElementById('syncForm').addEventListener('submit', function (e) {
@@ -621,6 +972,274 @@
 
         setInterval(fetchLogs, 1000);
         fetchLogs();
+
+        // ── SYNC NOW BUTTON ──
+        document.getElementById('syncNowBtn').addEventListener('click', function () {
+            const btn = this;
+            btn.textContent = '↻ Syncing…';
+            btn.disabled = true;
+            if (!logsVisible) toggleLogsBtn.click();
+            fetch('/api/sync_current', { method: 'POST' })
+                .then(r => r.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        setLastUpdated();
+                        setTimeout(() => location.reload(), 1200);
+                    } else {
+                        btn.textContent = '✕ Failed';
+                        btn.disabled = false;
+                        setTimeout(() => { btn.textContent = '↻ Sync'; }, 3000);
+                    }
+                })
+                .catch(() => {
+                    btn.textContent = '✕ Error';
+                    btn.disabled = false;
+                    setTimeout(() => { btn.textContent = '↻ Sync'; }, 3000);
+                });
+        });
+
+        // ── CSV FILE INPUT ──
+        document.getElementById('csvFileInput').addEventListener('change', function () {
+            const file = this.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = e => { document.getElementById('csvTextarea').value = e.target.result; };
+            reader.readAsText(file);
+        });
+
+        // ── CSV IMPORT ──
+        document.getElementById('csvImportBtn').addEventListener('click', function () {
+            const csv = document.getElementById('csvTextarea').value.trim();
+            if (!csv) { showCsvStatus('error', 'Paste or upload a CSV first.'); return; }
+            const btn = this;
+            btn.textContent = '⬆ Importing…';
+            btn.disabled = true;
+            const body = new FormData();
+            body.append('csv_data', csv);
+            fetch('/api/import/schedule', { method: 'POST', body })
+                .then(r => r.json())
+                .then(data => {
+                    btn.textContent = '⬆ Import Schedule';
+                    btn.disabled = false;
+                    if (data.status === 'success') {
+                        showCsvStatus('success', '✓ ' + data.message);
+                        // Refresh matchesState so Match Roster tab reflects new schedule
+                        data.imported && setTimeout(() => location.reload(), 2000);
+                    } else {
+                        showCsvStatus('error', '✕ ' + data.message);
+                    }
+                })
+                .catch(() => {
+                    btn.textContent = '⬆ Import Schedule';
+                    btn.disabled = false;
+                    showCsvStatus('error', '✕ Connection error.');
+                });
+        });
+
+        // ── CLEAR SCHEDULE ──
+        document.getElementById('clearScheduleBtn').addEventListener('click', function () {
+            if (!confirm('Clear all matches? This cannot be undone.')) return;
+            fetch('/api/reset/schedule', { method: 'POST' })
+                .then(r => r.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        showCsvStatus('success', `✓ Cleared ${data.cleared} matches. Ready to import.`);
+                    } else {
+                        showCsvStatus('error', '✕ Reset failed.');
+                    }
+                })
+                .catch(() => showCsvStatus('error', '✕ Connection error.'));
+        });
+
+        function showCsvStatus(type, msg) {
+            const el = document.getElementById('csvImportStatus');
+            el.className = `status ${type}`;
+            el.style.display = 'block';
+            el.textContent = msg;
+        }
+
+        // ══════════════════════════════════════
+        // DATA EDITOR MODAL
+        // ══════════════════════════════════════
+        const teamsState = {{ data.event_teams | tojson }};
+        const matchesState = {{ data.event_matches | tojson }};
+
+        function escHtml(s) {
+            return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+        }
+        function escAttr(s) {
+            return String(s ?? '').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+        }
+        function formatMatchNameJS(m) {
+            if (!m) return '';
+            if (m.comp_level === 'qm') return `QM${m.match_number}`;
+            return `${m.comp_level.toUpperCase()}${m.set_number}-${m.match_number}`;
+        }
+
+        // ── Open / close ──
+        const editorModal = document.getElementById('editorModal');
+
+        document.getElementById('openEditorBtn').addEventListener('click', () => {
+            editorModal.classList.add('visible');
+            renderTeamTable(document.getElementById('teamFilter').value);
+            populateRosterMatchSelect();
+        });
+        document.getElementById('closeEditorBtn').addEventListener('click', () => editorModal.classList.remove('visible'));
+        editorModal.addEventListener('click', e => { if (e.target === editorModal) editorModal.classList.remove('visible'); });
+
+        // ── Tabs ──
+        document.querySelectorAll('.modal-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.modal-tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+                tab.classList.add('active');
+                document.getElementById(`tab-${tab.dataset.tab}`).classList.add('active');
+            });
+        });
+
+        // ══ TEAMS TAB ══
+
+        document.getElementById('teamFilter').addEventListener('input', e => renderTeamTable(e.target.value));
+
+        function renderTeamTable(filter = '') {
+            const f = filter.toLowerCase();
+            const keys = Object.keys(teamsState).filter(k => {
+                const t = teamsState[k];
+                return !f || String(t.team_number).includes(f) || t.team_name.toLowerCase().includes(f);
+            });
+            keys.sort((a, b) => teamsState[a].team_number - teamsState[b].team_number);
+            document.getElementById('teamCount').textContent = `${keys.length} team${keys.length !== 1 ? 's' : ''}`;
+
+            const tbody = document.getElementById('teamTableBody');
+            tbody.innerHTML = keys.map(k => {
+                const t = teamsState[k];
+                const id = k.replace('frc', '');
+                return `<tr id="row-${id}">
+                    <td>${t.team_number}</td>
+                    <td>${escHtml(t.team_name)}</td>
+                    <td>${t.epa}</td>
+                    <td>${t.avg_auto_score}</td>
+                    <td>${t.avg_teleop_score}</td>
+                    <td>${t.avg_match_score}</td>
+                    <td>${escHtml(t.season_wlt)}</td>
+                    <td>${escHtml(t.event_wlt)}</td>
+                    <td><button class="btn-tbl btn-tbl-edit" data-key="${k}">Edit</button></td>
+                </tr>`;
+            }).join('');
+
+            tbody.querySelectorAll('.btn-tbl-edit').forEach(btn => {
+                btn.addEventListener('click', () => startEditTeam(btn.dataset.key));
+            });
+        }
+
+        function startEditTeam(key) {
+            const t = teamsState[key];
+            const id = key.replace('frc', '');
+            const row = document.getElementById(`row-${id}`);
+            row.classList.add('editing');
+            row.innerHTML = `
+                <td>${t.team_number}</td>
+                <td><input type="text"   id="e_name"   value="${escAttr(t.team_name)}"></td>
+                <td><input type="number" id="e_epa"    value="${t.epa}"              step="0.1"></td>
+                <td><input type="number" id="e_auto"   value="${t.avg_auto_score}"   step="0.1"></td>
+                <td><input type="number" id="e_teleop" value="${t.avg_teleop_score}" step="0.1"></td>
+                <td><input type="number" id="e_match"  value="${t.avg_match_score}"  step="0.1"></td>
+                <td><input type="text"   id="e_swlt"   value="${escAttr(t.season_wlt)}"></td>
+                <td><input type="text"   id="e_ewlt"   value="${escAttr(t.event_wlt)}"></td>
+                <td>
+                    <button class="btn-tbl btn-tbl-save"   id="save-${id}">Save</button>
+                    <button class="btn-tbl btn-tbl-cancel" id="cancel-${id}">✕</button>
+                </td>`;
+            document.getElementById(`save-${id}`).addEventListener('click', () => saveTeam(key));
+            document.getElementById(`cancel-${id}`).addEventListener('click', () => renderTeamTable(document.getElementById('teamFilter').value));
+        }
+
+        function saveTeam(key) {
+            const updates = {
+                team_name:        document.getElementById('e_name').value,
+                epa:              parseFloat(document.getElementById('e_epa').value)    || 0,
+                avg_auto_score:   parseFloat(document.getElementById('e_auto').value)   || 0,
+                avg_teleop_score: parseFloat(document.getElementById('e_teleop').value) || 0,
+                avg_match_score:  parseFloat(document.getElementById('e_match').value)  || 0,
+                season_wlt:       document.getElementById('e_swlt').value,
+                event_wlt:        document.getElementById('e_ewlt').value,
+            };
+            fetch('/api/edit/team', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ team_key: key, updates })
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    Object.assign(teamsState[key], updates);
+                    renderTeamTable(document.getElementById('teamFilter').value);
+                } else {
+                    alert('Save failed: ' + data.message);
+                }
+            })
+            .catch(() => alert('Connection error saving team.'));
+        }
+
+        // ══ MATCH ROSTER TAB ══
+
+        function populateRosterMatchSelect() {
+            const sel = document.getElementById('rosterMatchSelect');
+            const current = sel.value;
+            const keys = Object.keys(matchesState).sort((a, b) => {
+                const ta = matchesState[a].time || matchesState[a].predicted_time || 0;
+                const tb = matchesState[b].time || matchesState[b].predicted_time || 0;
+                return ta - tb;
+            });
+            sel.innerHTML = '<option value="">— Select a Match —</option>' +
+                keys.map(k => `<option value="${k}" ${k === current ? 'selected' : ''}>${formatMatchNameJS(matchesState[k])}</option>`).join('');
+            if (current && matchesState[current]) loadRoster(current);
+        }
+
+        function loadRoster(key) {
+            const m = matchesState[key];
+            if (!m) return;
+            const red = m.alliances.red.team_keys;
+            const blue = m.alliances.blue.team_keys;
+            ['red1','red2','red3'].forEach((id, i) => document.getElementById(id).value = red[i] ? red[i].replace('frc','') : '');
+            ['blue1','blue2','blue3'].forEach((id, i) => document.getElementById(id).value = blue[i] ? blue[i].replace('frc','') : '');
+        }
+
+        document.getElementById('rosterMatchSelect').addEventListener('change', e => loadRoster(e.target.value));
+
+        document.getElementById('saveRosterBtn').addEventListener('click', () => {
+            const matchKey = document.getElementById('rosterMatchSelect').value;
+            if (!matchKey) { showRosterStatus('error', 'Select a match first.'); return; }
+
+            const red_keys  = ['red1','red2','red3'].map(id => document.getElementById(id).value.trim()).filter(Boolean);
+            const blue_keys = ['blue1','blue2','blue3'].map(id => document.getElementById(id).value.trim()).filter(Boolean);
+
+            fetch('/api/edit/match_roster', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ match_key: matchKey, red_keys, blue_keys })
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    const norm = k => k.startsWith('frc') ? k : `frc${k}`;
+                    matchesState[matchKey].alliances.red.team_keys  = red_keys.map(norm);
+                    matchesState[matchKey].alliances.blue.team_keys = blue_keys.map(norm);
+                    showRosterStatus('success', '✓ Roster saved.');
+                } else {
+                    showRosterStatus('error', '✕ ' + data.message);
+                }
+            })
+            .catch(() => showRosterStatus('error', '✕ Connection error.'));
+        });
+
+        function showRosterStatus(type, msg) {
+            const el = document.getElementById('rosterStatus');
+            el.className = `status ${type}`;
+            el.style.display = 'block';
+            el.textContent = msg;
+            if (type === 'success') setTimeout(() => { el.style.display = 'none'; }, 3000);
+        }
     </script>
 </body>
 </html>
