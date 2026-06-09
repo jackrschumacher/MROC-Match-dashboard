@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+    <title>Team Setup — FRC Graphics</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap');
+
+        *, *::before, *::after { box-sizing: border-box; }
+
+        :root {
+            --bg-base:        #000000;
+            --bg-surface:     #111111;
+            --bg-raised:      #1a1a1a;
+            --bg-input:       #080808;
+            --bg-btn:         #061530;
+            --bg-btn-hover:   #0a2248;
+            --border-subtle:  #1e1e1e;
+            --border-mid:     #2a2a2a;
+            --border-accent:  #0d3575;
+            --border-focus:   #1a5bc7;
+            --text-primary:   #e8e8e8;
+            --text-secondary: #888888;
+            --text-muted:     #484848;
+            --text-label:     #606060;
+            --text-accent:    #4a7fd4;
+            --text-btn:       #6b9fe8;
+            --text-btn-hover: #90baf5;
+            --text-heading:   #ffffff;
+            --accent-hex:     #041e52;
+            --shadow:         0 2px 12px rgba(0,0,0,0.7);
+            --scrollbar-thumb:#2a2a2a;
+        }
+
+        @media (prefers-color-scheme: light) {
+            :root {
+                --bg-base:        #f0f0f7;
+                --bg-surface:     #ffffff;
+                --bg-raised:      #f8f8ff;
+                --bg-input:       #fafafe;
+                --bg-btn:         #eeeeff;
+                --bg-btn-hover:   #e0e0ff;
+                --border-subtle:  #d8d8ee;
+                --border-mid:     #c0c0e0;
+                --border-accent:  #8888dd;
+                --border-focus:   #5555cc;
+                --text-primary:   #1a1a3a;
+                --text-secondary: #5555aa;
+                --text-muted:     #9999bb;
+                --text-label:     #7070aa;
+                --text-accent:    #4444aa;
+                --text-btn:       #4444bb;
+                --text-btn-hover: #2222aa;
+                --text-heading:   #111130;
+                --accent-hex:     #5555cc;
+                --shadow:         0 2px 12px rgba(80,80,160,0.10);
+                --scrollbar-thumb:#c8c8e8;
+            }
+        }
+
+        html { color-scheme: light dark; }
+
+        body {
+            font-family: 'IBM Plex Sans', system-ui, sans-serif;
+            background: var(--bg-base);
+            color: var(--text-primary);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ── TOP BAR ── */
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 24px;
+            height: 52px;
+            background: var(--bg-surface);
+            border-bottom: 1px solid var(--border-subtle);
+            flex-shrink: 0;
+            gap: 12px;
+            box-shadow: var(--shadow);
+        }
+
+        .brand { display: flex; align-items: center; gap: 10px; }
+        .top-bar h1 {
+            margin: 0;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--text-heading);
+        }
+
+        .top-bar-right { display: flex; align-items: center; gap: 12px; }
+
+        .topbar-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 14px;
+            background: var(--bg-btn);
+            border: 1px solid var(--border-mid);
+            color: var(--text-btn);
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            transition: all 0.15s ease;
+            white-space: nowrap;
+            text-decoration: none;
+        }
+        .topbar-btn:hover { background: var(--bg-btn-hover); color: var(--text-btn-hover); border-color: var(--border-accent); }
+
+        .refresh-indicator {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .refresh-dot {
+            width: 6px; height: 6px;
+            background: #22cc44;
+            border-radius: 50%;
+            animation: blink 2.2s ease-in-out infinite;
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; } 50% { opacity: 0.2; }
+        }
+
+        /* ── MAIN ── */
+        .main {
+            flex: 1;
+            padding: 28px;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* ── TOOLBAR ── */
+        .toolbar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+
+        .search-input {
+            padding: 8px 12px;
+            border-radius: 4px;
+            border: 1px solid var(--border-mid);
+            background: var(--bg-input);
+            color: var(--text-primary);
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 12px;
+            outline: none;
+            width: 220px;
+            transition: border-color 0.15s;
+        }
+        .search-input:focus { border-color: var(--border-focus); }
+
+        .team-count {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .save-status {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            padding: 4px 10px;
+            border-radius: 3px;
+            display: none;
+        }
+        .save-status.ok  { display:block; color: #44dd66; background: #0a1f0d; border: 1px solid #1a4422; }
+        .save-status.err { display:block; color: #ee5555; background: #1f0a0a; border: 1px solid #441a1a; }
+
+        /* ── TABLE ── */
+        .table-wrap {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: 6px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 12px;
+        }
+
+        thead th {
+            position: sticky;
+            top: 0;
+            background: var(--bg-raised);
+            padding: 10px 12px;
+            text-align: left;
+            font-size: 10px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--text-label);
+            border-bottom: 1px solid var(--border-mid);
+            font-weight: 700;
+            white-space: nowrap;
+            cursor: pointer;
+            user-select: none;
+        }
+        thead th:hover { color: var(--text-secondary); }
+        thead th.sorted { color: var(--text-accent); }
+        thead th .sort-arrow { margin-left: 4px; opacity: 0.5; }
+        thead th.sorted .sort-arrow { opacity: 1; }
+
+        tbody tr { transition: background 0.1s; }
+        tbody tr:hover td { background: var(--bg-raised); }
+        tbody tr.disabled td { opacity: 0.45; }
+
+        td {
+            padding: 9px 12px;
+            border-bottom: 1px solid var(--border-subtle);
+            color: var(--text-primary);
+            vertical-align: middle;
+            white-space: nowrap;
+        }
+        tbody tr:last-child td { border-bottom: none; }
+
+        .team-num { font-weight: 700; font-size: 13px; }
+
+        /* Name uses the same input style as logo/notes but wider */
+        .name-input {
+            background: var(--bg-input);
+            border: 1px solid transparent;
+            border-radius: 3px;
+            color: var(--text-secondary);
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 12px;
+            padding: 5px 8px;
+            width: 220px;
+            outline: none;
+            transition: border-color 0.15s, background 0.15s;
+        }
+        .name-input:hover  { border-color: var(--border-mid); }
+        .name-input:focus  { border-color: var(--border-focus); background: var(--bg-raised); color: var(--text-primary); }
+        .name-input.unsaved { border-color: #555522; background: rgba(80,80,10,0.15); }
+        .name-input.saved   { border-color: #1a4422; }
+
+        /* ── TOGGLE ── */
+        .toggle {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            cursor: pointer;
+            user-select: none;
+        }
+        .toggle input { position: absolute; opacity: 0; width: 0; height: 0; }
+        .toggle-track {
+            position: relative;
+            width: 40px;
+            height: 22px;
+            background: var(--bg-raised);
+            border: 1px solid var(--border-mid);
+            border-radius: 11px;
+            transition: background 0.2s, border-color 0.2s;
+            flex-shrink: 0;
+        }
+        .toggle input:checked ~ .toggle-track {
+            background: #0d3575;
+            border-color: #1a5bc7;
+        }
+        .toggle-track::after {
+            content: '';
+            position: absolute;
+            left: 3px;
+            top: 3px;
+            width: 14px;
+            height: 14px;
+            background: var(--text-muted);
+            border-radius: 50%;
+            transition: transform 0.2s, background 0.2s;
+        }
+        .toggle input:checked ~ .toggle-track::after {
+            transform: translateX(18px);
+            background: #6b9fe8;
+        }
+        .toggle:hover .toggle-track { border-color: var(--border-accent); }
+        .toggle-label {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            letter-spacing: 0.08em;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            min-width: 20px;
+        }
+        .toggle input:checked ~ .toggle-label { color: var(--text-accent); }
+
+        /* ── LOGO INPUT ── */
+        .logo-cell { display: flex; align-items: center; gap: 8px; }
+        .logo-input {
+            background: var(--bg-input);
+            border: 1px solid var(--border-mid);
+            border-radius: 3px;
+            color: var(--text-primary);
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            padding: 5px 8px;
+            width: 130px;
+            outline: none;
+            transition: border-color 0.15s;
+        }
+        .logo-input:focus { border-color: var(--border-focus); }
+        .logo-input.unsaved { border-color: #555522; background: rgba(80,80,10,0.15); }
+        .logo-input.saved   { border-color: #1a4422; }
+
+        /* stat cells */
+        .stat { text-align: right; }
+        .stat-header { text-align: right; }
+
+        /* ── STAT INPUT ── */
+        .stat-input {
+            background: var(--bg-input);
+            border: 1px solid transparent;
+            border-radius: 3px;
+            color: var(--text-secondary);
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 12px;
+            padding: 5px 8px;
+            width: 72px;
+            text-align: right;
+            outline: none;
+            transition: border-color 0.15s, background 0.15s;
+            -moz-appearance: textfield;
+        }
+        .stat-input::-webkit-inner-spin-button,
+        .stat-input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+        .stat-input:hover  { border-color: var(--border-mid); }
+        .stat-input:focus  { border-color: var(--border-focus); background: var(--bg-raised); color: var(--text-primary); }
+        .stat-input.unsaved { border-color: #555522; background: rgba(80,80,10,0.15); }
+        .stat-input.saved   { border-color: #1a4422; }
+        .stat-wlt { width: 76px; text-align: center; }
+
+        /* no teams */
+        .empty-msg {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-muted);
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="top-bar">
+    <div class="brand">
+        <img src="{{ url_for('static', filename='favicon.ico') }}" alt="" width="28" height="28" style="flex-shrink:0;">
+        <h1>Team Setup</h1>
+    </div>
+    <div class="top-bar-right">
+        <div class="refresh-indicator">
+            <div class="refresh-dot"></div>
+            <span id="refreshLabel">Auto-refresh: 30s</span>
+        </div>
+        <button class="topbar-btn" id="refreshBtn">↻ Refresh Now</button>
+        <a href="/" class="topbar-btn">← Control Panel</a>
+    </div>
+</div>
+
+<div class="main">
+    <div class="toolbar">
+        <input type="text" class="search-input" id="searchInput" placeholder="Search by number or name…">
+        <span class="team-count" id="teamCount"></span>
+        <span class="save-status" id="saveStatus"></span>
+    </div>
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th data-col="team_number" class="sorted"># <span class="sort-arrow">↑</span></th>
+                    <th data-col="team_name">Name <span class="sort-arrow">↕</span></th>
+                    <th>Logo File</th>
+                    <th>Enabled</th>
+                    <th>Notes</th>
+                    <th class="stat-header" data-col="epa">EPA <span class="sort-arrow">↕</span></th>
+                    <th class="stat-header" data-col="avg_auto_score">Avg Auto <span class="sort-arrow">↕</span></th>
+                    <th class="stat-header" data-col="avg_teleop_score">Avg Teleop <span class="sort-arrow">↕</span></th>
+                    <th class="stat-header" data-col="avg_match_score">Avg Score <span class="sort-arrow">↕</span></th>
+                    <th class="stat-header" data-col="event_wlt">Event W-L-T <span class="sort-arrow">↕</span></th>
+                </tr>
+            </thead>
+            <tbody id="teamBody"></tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    let teamsData = {};
+    let sortCol = 'team_number';
+    let sortAsc = true;
+    let searchVal = '';
+    let saveTimer = null;
+
+    // ── FETCH & RENDER ──
+    function fetchTeams() {
+        fetch('/api/teams')
+            .then(r => r.json())
+            .then(data => {
+                teamsData = data;
+                renderTable();
+                scheduleCountdown();
+            })
+            .catch(() => {});
+    }
+
+    function renderTable() {
+        const f = searchVal.toLowerCase();
+        let keys = Object.keys(teamsData).filter(k => {
+            const t = teamsData[k];
+            return !f || String(t.team_number).includes(f) || (t.team_name || '').toLowerCase().includes(f);
+        });
+
+        keys.sort((a, b) => {
+            const ta = teamsData[a], tb = teamsData[b];
+            let va = ta[sortCol] ?? 0, vb = tb[sortCol] ?? 0;
+            if (typeof va === 'string') va = va.toLowerCase();
+            if (typeof vb === 'string') vb = vb.toLowerCase();
+            return sortAsc ? (va > vb ? 1 : va < vb ? -1 : 0) : (va < vb ? 1 : va > vb ? -1 : 0);
+        });
+
+        document.getElementById('teamCount').textContent = `${keys.length} team${keys.length !== 1 ? 's' : ''}`;
+
+        const tbody = document.getElementById('teamBody');
+        if (!keys.length) {
+            tbody.innerHTML = `<tr><td colspan="9" class="empty-msg">No teams found</td></tr>`;
+            return;
+        }
+
+        tbody.innerHTML = keys.map(k => {
+            const t = teamsData[k];
+            const enabled = t.logo_enabled !== false;
+            const logo = t.logo || '';
+            const notes = t.notes || '';
+            return `<tr class="${enabled ? '' : 'disabled'}" data-key="${k}">
+                <td class="team-num">${t.team_number}</td>
+                <td>
+                    <input class="name-input" type="text"
+                        value="${esc(t.team_name || '')}"
+                        placeholder="Team name"
+                        data-key="${k}"
+                        data-field="team_name"
+                        data-original="${esc(t.team_name || '')}">
+                </td>
+                <td>
+                    <div class="logo-cell">
+                        <input class="logo-input" type="text"
+                            value="${esc(logo)}"
+                            placeholder="e.g. ${t.team_number}.jpg"
+                            data-key="${k}"
+                            data-field="logo"
+                            data-original="${esc(logo)}">
+                    </div>
+                </td>
+                <td>
+                    <label class="toggle">
+                        <input type="checkbox" ${enabled ? 'checked' : ''} data-key="${k}" data-field="logo_enabled">
+                        <span class="toggle-track"></span>
+                        <span class="toggle-label">${enabled ? 'On' : 'Off'}</span>
+                    </label>
+                </td>
+                <td>
+                    <input class="logo-input" type="text" style="width:180px;"
+                        value="${esc(notes)}"
+                        placeholder="Team notes..."
+                        data-key="${k}"
+                        data-field="notes"
+                        data-original="${esc(notes)}">
+                </td>
+                <td class="stat">
+                    <input class="stat-input" type="number" step="0.1" min="0"
+                        value="${t.epa ?? 0}"
+                        data-key="${k}" data-field="epa" data-type="float"
+                        data-original="${t.epa ?? 0}">
+                </td>
+                <td class="stat">
+                    <input class="stat-input" type="number" step="0.1" min="0"
+                        value="${t.avg_auto_score ?? 0}"
+                        data-key="${k}" data-field="avg_auto_score" data-type="float"
+                        data-original="${t.avg_auto_score ?? 0}">
+                </td>
+                <td class="stat">
+                    <input class="stat-input" type="number" step="0.1" min="0"
+                        value="${t.avg_teleop_score ?? 0}"
+                        data-key="${k}" data-field="avg_teleop_score" data-type="float"
+                        data-original="${t.avg_teleop_score ?? 0}">
+                </td>
+                <td class="stat">
+                    <input class="stat-input" type="number" step="0.1" min="0"
+                        value="${t.avg_match_score ?? 0}"
+                        data-key="${k}" data-field="avg_match_score" data-type="float"
+                        data-original="${t.avg_match_score ?? 0}">
+                </td>
+                <td class="stat">
+                    <input class="stat-input stat-wlt" type="text"
+                        value="${esc(t.event_wlt || '0-0-0')}"
+                        placeholder="0-0-0"
+                        data-key="${k}" data-field="event_wlt"
+                        data-original="${esc(t.event_wlt || '0-0-0')}">
+                </td>
+            </tr>`;
+        }).join('');
+
+        // All editable inputs — text, number, and WLT (skip checkboxes)
+        tbody.querySelectorAll('input[data-field]:not([type="checkbox"])').forEach(input => {
+            input.addEventListener('input', () => {
+                const changed = input.value !== String(input.dataset.original);
+                input.classList.toggle('unsaved', changed);
+                input.classList.remove('saved');
+            });
+            input.addEventListener('change', () => {
+                const key     = input.dataset.key;
+                const field   = input.dataset.field;
+                const isFloat = input.dataset.type === 'float';
+                const val     = isFloat
+                    ? Math.round((parseFloat(input.value) || 0) * 10) / 10
+                    : input.value.trim();
+                teamsData[key][field] = val;
+                saveTeamField(key, { [field]: val }, input);
+                input.value = val; // normalise display (trim / rounded)
+                input.dataset.original = String(val);
+            });
+            input.addEventListener('keydown', e => { if (e.key === 'Enter') input.blur(); });
+        });
+
+        // Toggle events
+        tbody.querySelectorAll('input[data-field="logo_enabled"]').forEach(cb => {
+            cb.addEventListener('change', () => {
+                const key = cb.dataset.key;
+                teamsData[key].logo_enabled = cb.checked;
+                saveTeamField(key, { logo_enabled: cb.checked });
+                const row = cb.closest('tr');
+                row.classList.toggle('disabled', !cb.checked);
+                const label = row.querySelector('.toggle-label');
+                if (label) label.textContent = cb.checked ? 'On' : 'Off';
+            });
+        });
+    }
+
+    function saveTeamField(key, updates, inputEl) {
+        fetch('/api/edit/team', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ team_key: key, updates })
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.status === 'success') {
+                if (inputEl) {
+                    inputEl.dataset.original = inputEl.value;
+                    inputEl.classList.remove('unsaved');
+                    inputEl.classList.add('saved');
+                    setTimeout(() => inputEl.classList.remove('saved'), 2000);
+                }
+                showStatus('ok', '✓ Saved');
+            } else {
+                showStatus('err', '✕ ' + data.message);
+            }
+        })
+        .catch(() => showStatus('err', '✕ Connection error'));
+    }
+
+    function showStatus(type, msg) {
+        const el = document.getElementById('saveStatus');
+        el.className = 'save-status ' + type;
+        el.textContent = msg;
+        clearTimeout(saveTimer);
+        saveTimer = setTimeout(() => { el.className = 'save-status'; }, 2500);
+    }
+
+    // ── SORT ──
+    document.querySelectorAll('thead th[data-col]').forEach(th => {
+        th.addEventListener('click', () => {
+            const col = th.dataset.col;
+            if (sortCol === col) sortAsc = !sortAsc;
+            else { sortCol = col; sortAsc = col === 'team_number'; }
+            document.querySelectorAll('thead th').forEach(t => {
+                t.classList.remove('sorted');
+                const arrow = t.querySelector('.sort-arrow');
+                if (arrow) arrow.textContent = '↕';
+            });
+            th.classList.add('sorted');
+            const arrow = th.querySelector('.sort-arrow');
+            if (arrow) arrow.textContent = sortAsc ? '↑' : '↓';
+            renderTable();
+        });
+    });
+
+    // ── SEARCH ──
+    document.getElementById('searchInput').addEventListener('input', e => {
+        searchVal = e.target.value;
+        renderTable();
+    });
+
+    // ── REFRESH COUNTDOWN ──
+    let countdown = 30;
+    let countdownTimer;
+
+    function scheduleCountdown() {
+        clearInterval(countdownTimer);
+        countdown = 30;
+        document.getElementById('refreshLabel').textContent = `Auto-refresh: ${countdown}s`;
+        countdownTimer = setInterval(() => {
+            countdown--;
+            document.getElementById('refreshLabel').textContent = `Auto-refresh: ${countdown}s`;
+            if (countdown <= 0) {
+                clearInterval(countdownTimer);
+                fetchTeams();
+            }
+        }, 1000);
+    }
+
+    document.getElementById('refreshBtn').addEventListener('click', () => {
+        clearInterval(countdownTimer);
+        fetchTeams();
+    });
+
+    // ── UTILS ──
+    function esc(s) {
+        return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    // ── INIT ──
+    fetchTeams();
+</script>
+</body>
+</html>

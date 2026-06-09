@@ -123,33 +123,25 @@
         /* ══════════════════════════════════════
            TOP BAR
         ══════════════════════════════════════ */
+        /* ══════════════════════════════════════
+           TOP BAR
+        ══════════════════════════════════════ */
         .top-bar {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0 24px;
+            padding: 0 16px 0 8px;
             height: 52px;
             background: var(--bg-surface);
             border-bottom: 1px solid var(--border-subtle);
             flex-shrink: 0;
             gap: 12px;
             box-shadow: var(--shadow);
+            z-index: 50;
+            position: relative;
         }
 
-        .brand {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .brand-hex {
-            width: 28px;
-            height: 28px;
-            fill: none;
-            stroke: var(--accent-hex);
-            stroke-width: 1.5;
-            flex-shrink: 0;
-        }
+        .brand { display: flex; align-items: center; gap: 0; }
 
         .top-bar h1 {
             margin: 0;
@@ -161,41 +153,38 @@
             color: var(--text-heading);
         }
 
-        .top-bar-right {
-            display: flex;
-            align-items: center;
-            gap: 20px;
+        .top-bar-right { display: flex; align-items: center; gap: 8px; }
+
+        /* hamburger */
+        .hamburger {
+            width: 40px; height: 40px;
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            gap: 5px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+            padding: 0;
+            flex-shrink: 0;
+            transition: background 0.15s;
         }
-
-        .last-updated {
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 11px;
-            color: var(--text-muted);
-            letter-spacing: 0.04em;
-            white-space: nowrap;
+        .hamburger:hover { background: var(--bg-raised); }
+        .hamburger span {
+            display: block;
+            width: 18px; height: 1.5px;
+            background: var(--text-secondary);
+            border-radius: 2px;
+            transition: all 0.22s ease;
+            transform-origin: center;
         }
+        .hamburger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+        .hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+        .hamburger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
 
-        .last-updated .label { color: var(--text-muted); }
-        .last-updated .value { color: var(--text-secondary); }
-
-        /* theme badge */
-        .theme-badge {
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 10px;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            color: var(--text-muted);
-            padding: 3px 8px;
-            border: 1px solid var(--border-subtle);
-            border-radius: 20px;
-            white-space: nowrap;
-            user-select: none;
-        }
-
+        /* logs toggle */
         #toggleLogsBtn {
-            display: flex;
-            align-items: center;
-            gap: 6px;
+            display: flex; align-items: center; gap: 6px;
             padding: 7px 14px;
             background: var(--bg-btn);
             border: 1px solid var(--border-mid);
@@ -209,11 +198,100 @@
             transition: all 0.15s ease;
             white-space: nowrap;
         }
-
         #toggleLogsBtn:hover { background: var(--bg-btn-hover); color: var(--text-btn-hover); border-color: var(--border-accent); }
         #toggleLogsBtn.active { border-color: var(--border-focus); color: var(--text-accent); }
-
         .btn-icon { font-size: 13px; line-height: 1; }
+
+        /* ══════════════════════════════════════
+           LEFT DRAWER
+        ══════════════════════════════════════ */
+        .drawer-backdrop {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 90;
+        }
+        .drawer-backdrop.visible { display: block; }
+
+        .drawer {
+            position: fixed;
+            top: 0; left: 0; bottom: 0;
+            width: 260px;
+            background: var(--bg-surface);
+            border-right: 1px solid var(--border-subtle);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            transform: translateX(-100%);
+            transition: transform 0.25s cubic-bezier(0.4,0,0.2,1);
+        }
+        .drawer.open { transform: translateX(0); }
+
+        .drawer-header {
+            display: flex;
+            align-items: center;
+            gap: 0;
+            height: 52px;
+            padding: 0 16px 0 8px;
+            border-bottom: 1px solid var(--border-subtle);
+            flex-shrink: 0;
+        }
+        .drawer-header h2 {
+            margin: 0;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--text-heading);
+        }
+
+        .drawer-body { flex: 1; overflow-y: auto; padding: 16px 0; }
+
+        .drawer-section-label {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 9px;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            padding: 12px 18px 6px;
+        }
+
+        .drawer-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 11px 18px;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 12px;
+            letter-spacing: 0.05em;
+            color: var(--text-secondary);
+            cursor: pointer;
+            background: none;
+            border: none;
+            width: 100%;
+            text-align: left;
+            text-decoration: none;
+            transition: background 0.12s, color 0.12s;
+        }
+        .drawer-item:hover { background: var(--bg-raised); color: var(--text-primary); }
+        .drawer-item-icon {
+            font-size: 14px;
+            width: 20px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+        .drawer-divider { height: 1px; background: var(--border-subtle); margin: 8px 0; }
+
+        .drawer-sync-info {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            color: var(--text-muted);
+            padding: 4px 18px 10px;
+            letter-spacing: 0.04em;
+        }
+        .drawer-sync-info span { color: var(--text-secondary); }
 
         /* ══════════════════════════════════════
            LAYOUT
@@ -761,28 +839,6 @@
         #csvTextarea:focus { border-color: var(--border-focus); }
         #csvImportStatus { margin-top: 6px; }
 
-        /* ══════════════════════════════════════
-           TOP BAR BUTTONS
-        ══════════════════════════════════════ */
-        .topbar-btn {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            padding: 7px 14px;
-            background: var(--bg-btn);
-            border: 1px solid var(--border-mid);
-            color: var(--text-btn);
-            border-radius: 4px;
-            cursor: pointer;
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 11px;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            transition: all 0.15s ease;
-            white-space: nowrap;
-        }
-        .topbar-btn:hover { background: var(--bg-btn-hover); color: var(--text-btn-hover); border-color: var(--border-accent); }
-        .topbar-btn.active { border-color: var(--border-focus); color: var(--text-accent); }
 
         /* ══════════════════════════════════════
            SMALL MODAL (event setup)
@@ -891,20 +947,61 @@
 </head>
 <body>
 
+    <!-- DRAWER BACKDROP -->
+    <div class="drawer-backdrop" id="drawerBackdrop"></div>
+
+    <!-- LEFT DRAWER -->
+    <div class="drawer" id="drawer">
+        <div class="drawer-header">
+            <button class="hamburger open" id="drawerCloseBtn" style="margin-right:8px;">
+                <span></span><span></span><span></span>
+            </button>
+            <h2>Menu</h2>
+        </div>
+        <div class="drawer-body">
+
+            <div class="drawer-section-label">Sync</div>
+            <button class="drawer-item" id="syncNowBtn">
+                <span class="drawer-item-icon">↻</span> Sync Event Data
+            </button>
+            <div class="drawer-sync-info">Event: <span id="lastFullSync">—</span></div>
+            <button class="drawer-item" id="syncScoresBtn">
+                <span class="drawer-item-icon">⬇</span> Sync Scores
+            </button>
+            <div class="drawer-sync-info">Scores: <span id="lastScoreSync">—</span></div>
+
+            <div class="drawer-divider"></div>
+            <div class="drawer-section-label">Configuration</div>
+            <button class="drawer-item" id="openEventSetupBtn">
+                <span class="drawer-item-icon">⚙</span> Event Setup
+            </button>
+            <button class="drawer-item" id="openEditorBtn">
+                <span class="drawer-item-icon">✎</span> Data Editor
+            </button>
+
+            <div class="drawer-divider"></div>
+            <div class="drawer-section-label">Pages</div>
+            <a href="/teams"   target="_blank" class="drawer-item">
+                <span class="drawer-item-icon">⬡</span> Team Setup ↗
+            </a>
+            <a href="/matches" target="_blank" class="drawer-item">
+                <span class="drawer-item-icon">☰</span> Match Schedule ↗
+            </a>
+
+        </div>
+    </div>
+
+    <!-- TOP BAR -->
     <div class="top-bar">
         <div class="brand">
-            <img src="{{ url_for('static', filename='favicon.ico') }}" alt="" width="28" height="28" style="flex-shrink:0;">
+            <button class="hamburger" id="drawerOpenBtn">
+                <span></span><span></span><span></span>
+            </button>
+            <img src="{{ url_for('static', filename='favicon.ico') }}" alt="" width="26" height="26" style="flex-shrink:0; margin: 0 8px;">
             <h1>FRC Graphics Control</h1>
         </div>
         <div class="top-bar-right">
-            <div class="last-updated" id="lastUpdatedDisplay">
-                <span class="label">Last sync: </span><span class="value" id="lastUpdatedTime">Never</span>
-            </div>
-            <button type="button" class="topbar-btn" id="syncNowBtn">↻ Sync Event</button>
-            <button type="button" class="topbar-btn" id="syncScoresBtn">⬇ Sync Scores</button>
-            <button type="button" class="topbar-btn" id="openEventSetupBtn">⚙ Event Setup</button>
-            <button type="button" class="topbar-btn" id="openEditorBtn">✎ Data Editor</button>
-            <button id="toggleLogsBtn" type="button" class="topbar-btn">
+            <button id="toggleLogsBtn" type="button">
                 <span class="btn-icon">◧</span>
                 <span id="logBtnText">Show Logs</span>
             </button>
@@ -948,6 +1045,18 @@
                     <div class="score-entry-block score-entry-blue">
                         <label style="color:#5588ee;">Blue Score</label>
                         <input type="number" id="blueScoreInput" min="0" placeholder="—">
+                    </div>
+                </div>
+                <!-- TIE SCORE PROMPT (shown when Tie is clicked) -->
+                <div id="tieScorePrompt" style="display:none; margin-bottom:6px; padding:10px 12px; background:var(--bg-raised); border:1px solid var(--border-mid); border-radius:4px;">
+                    <label style="margin-bottom:6px; font-size:10px; color:var(--text-label);">Tied Score (both alliances)</label>
+                    <div style="display:flex; gap:8px; align-items:center;">
+                        <input type="number" id="tieScoreInput" min="0" placeholder="0"
+                               style="flex:1; margin-bottom:0; text-align:center; font-size:15px; font-weight:700; padding:8px;">
+                        <button type="button" id="confirmTieBtn"
+                                style="flex:0 0 auto; padding:9px 16px; border-radius:4px; cursor:pointer; font-family:'IBM Plex Mono',monospace; font-size:11px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; background:var(--bg-btn); border:1px solid var(--border-accent); color:var(--text-btn); transition:all 0.15s;">✓ Confirm</button>
+                        <button type="button" id="cancelTieBtn"
+                                style="flex:0 0 auto; padding:9px 12px; border-radius:4px; cursor:pointer; font-family:'IBM Plex Mono',monospace; font-size:11px; font-weight:700; background:var(--bg-raised); border:1px solid var(--border-mid); color:var(--text-muted); transition:all 0.15s;">✕</button>
                     </div>
                 </div>
                 <div class="result-row" style="margin-top:8px;">
@@ -1036,6 +1145,7 @@
                                 <tr>
                                     <th>#</th>
                                     <th>Name</th>
+                                    <th>Logo File</th>
                                     <th>EPA</th>
                                     <th>Avg Auto</th>
                                     <th>Avg Teleop</th>
@@ -1113,19 +1223,46 @@ F1-1,1234,5678,9012,3456,7890,1122</code>
 
     <script>
         // ── LAST UPDATED PERSISTENCE ──
-        function setLastUpdated() {
-            const now = new Date().toLocaleString('en-US', {
-                month: 'short', day: 'numeric',
-                hour: '2-digit', minute: '2-digit', second: '2-digit'
-            });
-            localStorage.setItem('frc_last_updated', now);
-            document.getElementById('lastUpdatedTime').textContent = now;
+        function fetchSyncTimes() {
+            fetch('/api/sync_times')
+                .then(r => r.json())
+                .then(d => {
+                    document.getElementById('lastFullSync').textContent  = d.last_full_sync  || 'Never';
+                    document.getElementById('lastScoreSync').textContent = d.last_score_sync || 'Never';
+                })
+                .catch(() => {});
+        }
+        fetchSyncTimes();
+
+        // Keep legacy setLastUpdated as no-op so existing callers don't break
+        function setLastUpdated() { fetchSyncTimes(); }
+
+
+        // ── LEFT DRAWER ──
+        const drawer = document.getElementById('drawer');
+        const drawerBackdrop = document.getElementById('drawerBackdrop');
+        const drawerOpenBtn = document.getElementById('drawerOpenBtn');
+        const drawerCloseBtn = document.getElementById('drawerCloseBtn');
+
+        function openDrawer() {
+            drawer.classList.add('open');
+            drawerBackdrop.classList.add('visible');
+            drawerOpenBtn.classList.add('open');
+        }
+        function closeDrawer() {
+            drawer.classList.remove('open');
+            drawerBackdrop.classList.remove('visible');
+            drawerOpenBtn.classList.remove('open');
         }
 
-        (function renderLastUpdated() {
-            const saved = localStorage.getItem('frc_last_updated');
-            document.getElementById('lastUpdatedTime').textContent = saved || 'Never';
-        })();
+        drawerOpenBtn.addEventListener('click', openDrawer);
+        drawerCloseBtn.addEventListener('click', closeDrawer);
+        drawerBackdrop.addEventListener('click', closeDrawer);
+
+        // Close drawer when any action item is clicked
+        ['openEventSetupBtn', 'openEditorBtn', 'syncNowBtn', 'syncScoresBtn'].forEach(id => {
+            document.getElementById(id).addEventListener('click', closeDrawer, { capture: true });
+        });
 
         // ── LOG TOGGLE (persisted) ──
         const rightPanel = document.getElementById('rightPanel');
@@ -1236,6 +1373,7 @@ F1-1,1234,5678,9012,3456,7890,1122</code>
                     statusDiv.textContent = `✓ ${label} recorded. Advancing…`;
                     document.getElementById('redScoreInput').value = '';
                     document.getElementById('blueScoreInput').value = '';
+                    document.getElementById('tieScorePrompt').style.display = 'none';
                     if (data.next_match) {
                         document.getElementById('match_key').value = data.next_match;
                         renderActiveMatch();
@@ -1255,8 +1393,46 @@ F1-1,1234,5678,9012,3456,7890,1122</code>
         }
 
         document.getElementById('winRedBtn').addEventListener('click',  () => setMatchResult('red'));
-        document.getElementById('winTieBtn').addEventListener('click',  () => setMatchResult(''));
         document.getElementById('winBlueBtn').addEventListener('click', () => setMatchResult('blue'));
+
+        // Tie — ask for a single shared score if not already filled in equally
+        document.getElementById('winTieBtn').addEventListener('click', () => {
+            const redRaw  = document.getElementById('redScoreInput').value.trim();
+            const blueRaw = document.getElementById('blueScoreInput').value.trim();
+            // Both filled and equal → proceed immediately
+            if (redRaw !== '' && blueRaw !== '' && redRaw === blueRaw) {
+                setMatchResult('');
+                return;
+            }
+            // Show prompt, pre-fill from whichever score field has a value
+            const prompt = document.getElementById('tieScorePrompt');
+            document.getElementById('tieScoreInput').value = redRaw || blueRaw || '';
+            prompt.style.display = 'block';
+            document.getElementById('tieScoreInput').focus();
+        });
+
+        document.getElementById('confirmTieBtn').addEventListener('click', () => {
+            const score = document.getElementById('tieScoreInput').value.trim();
+            document.getElementById('tieScorePrompt').style.display = 'none';
+            document.getElementById('tieScoreInput').value = '';
+            // Copy tied score into both alliance fields so setMatchResult can pick them up
+            if (score !== '') {
+                document.getElementById('redScoreInput').value  = score;
+                document.getElementById('blueScoreInput').value = score;
+            }
+            setMatchResult('');
+        });
+
+        document.getElementById('cancelTieBtn').addEventListener('click', () => {
+            document.getElementById('tieScorePrompt').style.display = 'none';
+            document.getElementById('tieScoreInput').value = '';
+        });
+
+        // Enter / Escape shortcuts inside the tie score input
+        document.getElementById('tieScoreInput').addEventListener('keydown', e => {
+            if (e.key === 'Enter')  document.getElementById('confirmTieBtn').click();
+            if (e.key === 'Escape') document.getElementById('cancelTieBtn').click();
+        });
 
         // ── SYNC SCORES BUTTON + AUTO-SYNC ──
         function syncScores(silent) {
@@ -1265,6 +1441,7 @@ F1-1,1234,5678,9012,3456,7890,1122</code>
             fetch('/api/sync_scores', { method: 'POST' })
                 .then(r => r.json())
                 .then(data => {
+                    if (data.status === 'success') fetchSyncTimes();
                     if (!silent) {
                         btn.textContent = data.status === 'success'
                             ? `✓ ${data.updated} updated`
@@ -1520,6 +1697,7 @@ F1-1,1234,5678,9012,3456,7890,1122</code>
                         ${t.team_number}
                     </td>
                     <td>${escHtml(t.team_name)}</td>
+                    <td style="color:var(--text-secondary);font-size:11px;">${escHtml(t.logo || '')}</td>
                     <td>${t.epa}</td>
                     <td>${t.avg_auto_score}</td>
                     <td>${t.avg_teleop_score}</td>
@@ -1584,6 +1762,7 @@ F1-1,1234,5678,9012,3456,7890,1122</code>
             row.innerHTML = `
                 <td>${t.team_number}</td>
                 <td><input type="text"   id="e_name"   value="${escAttr(t.team_name)}"></td>
+                <td><input type="text"   id="e_logo"   value="${escAttr(t.logo || '')}" placeholder="e.g. 930.jpg"></td>
                 <td><input type="number" id="e_epa"    value="${t.epa}"              step="0.1"></td>
                 <td><input type="number" id="e_auto"   value="${t.avg_auto_score}"   step="0.1"></td>
                 <td><input type="number" id="e_teleop" value="${t.avg_teleop_score}" step="0.1"></td>
@@ -1601,6 +1780,7 @@ F1-1,1234,5678,9012,3456,7890,1122</code>
         function saveTeam(key) {
             const updates = {
                 team_name:        document.getElementById('e_name').value,
+                logo:             document.getElementById('e_logo').value.trim(),
                 epa:              parseFloat(document.getElementById('e_epa').value)    || 0,
                 avg_auto_score:   parseFloat(document.getElementById('e_auto').value)   || 0,
                 avg_teleop_score: parseFloat(document.getElementById('e_teleop').value) || 0,

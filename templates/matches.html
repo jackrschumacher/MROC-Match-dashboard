@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+    <title>Matches — FRC Graphics</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap');
+
+        *, *::before, *::after { box-sizing: border-box; }
+
+        :root {
+            --bg-base:        #000000;
+            --bg-surface:     #111111;
+            --bg-raised:      #1a1a1a;
+            --bg-input:       #080808;
+            --bg-btn:         #061530;
+            --bg-btn-hover:   #0a2248;
+            --border-subtle:  #1e1e1e;
+            --border-mid:     #2a2a2a;
+            --border-accent:  #0d3575;
+            --border-focus:   #1a5bc7;
+            --text-primary:   #e8e8e8;
+            --text-secondary: #888888;
+            --text-muted:     #484848;
+            --text-label:     #606060;
+            --text-accent:    #4a7fd4;
+            --text-btn:       #6b9fe8;
+            --text-btn-hover: #90baf5;
+            --text-heading:   #ffffff;
+            --shadow:         0 2px 12px rgba(0,0,0,0.7);
+            --scrollbar-thumb:#2a2a2a;
+        }
+
+        @media (prefers-color-scheme: light) {
+            :root {
+                --bg-base:        #f0f0f7;
+                --bg-surface:     #ffffff;
+                --bg-raised:      #f8f8ff;
+                --bg-input:       #fafafe;
+                --bg-btn:         #eeeeff;
+                --bg-btn-hover:   #e0e0ff;
+                --border-subtle:  #d8d8ee;
+                --border-mid:     #c0c0e0;
+                --border-accent:  #8888dd;
+                --border-focus:   #5555cc;
+                --text-primary:   #1a1a3a;
+                --text-secondary: #5555aa;
+                --text-muted:     #9999bb;
+                --text-label:     #7070aa;
+                --text-accent:    #4444aa;
+                --text-btn:       #4444bb;
+                --text-btn-hover: #2222aa;
+                --text-heading:   #111130;
+                --shadow:         0 2px 12px rgba(80,80,160,0.10);
+                --scrollbar-thumb:#c8c8e8;
+            }
+        }
+
+        html { color-scheme: light dark; }
+
+        body {
+            font-family: 'IBM Plex Sans', system-ui, sans-serif;
+            background: var(--bg-base);
+            color: var(--text-primary);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ── TOP BAR ── */
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 24px;
+            height: 52px;
+            background: var(--bg-surface);
+            border-bottom: 1px solid var(--border-subtle);
+            flex-shrink: 0;
+            gap: 12px;
+            box-shadow: var(--shadow);
+        }
+        .brand { display: flex; align-items: center; gap: 10px; }
+        .top-bar h1 {
+            margin: 0;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--text-heading);
+        }
+        .top-bar-right { display: flex; align-items: center; gap: 12px; }
+        .topbar-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 14px;
+            background: var(--bg-btn);
+            border: 1px solid var(--border-mid);
+            color: var(--text-btn);
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            transition: all 0.15s ease;
+            white-space: nowrap;
+            text-decoration: none;
+        }
+        .topbar-btn:hover { background: var(--bg-btn-hover); color: var(--text-btn-hover); border-color: var(--border-accent); }
+
+        .event-label {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+        .event-label span { color: var(--text-secondary); }
+
+        .refresh-indicator {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .refresh-dot {
+            width: 6px; height: 6px;
+            background: #22cc44;
+            border-radius: 50%;
+            animation: blink 2.2s ease-in-out infinite;
+        }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.2; } }
+
+        /* ── MAIN ── */
+        .main { flex: 1; padding: 28px; }
+
+        /* ── TOOLBAR ── */
+        .toolbar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 18px;
+            flex-wrap: wrap;
+        }
+        .search-input {
+            padding: 8px 12px;
+            border-radius: 4px;
+            border: 1px solid var(--border-mid);
+            background: var(--bg-input);
+            color: var(--text-primary);
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 12px;
+            outline: none;
+            width: 220px;
+            transition: border-color 0.15s;
+        }
+        .search-input:focus { border-color: var(--border-focus); }
+
+        .filter-btns { display: flex; gap: 6px; }
+        .filter-btn {
+            padding: 6px 12px;
+            border-radius: 4px;
+            border: 1px solid var(--border-mid);
+            background: var(--bg-btn);
+            color: var(--text-muted);
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.13s;
+        }
+        .filter-btn:hover { color: var(--text-secondary); border-color: var(--border-accent); }
+        .filter-btn.active { background: var(--bg-btn-hover); color: var(--text-accent); border-color: var(--border-focus); }
+
+        .match-count { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--text-muted); }
+
+        /* ── TABLE ── */
+        .table-wrap {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: 6px;
+            overflow: auto;
+            box-shadow: var(--shadow);
+        }
+        .table-wrap::-webkit-scrollbar { height: 4px; width: 4px; }
+        .table-wrap::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 2px; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 12px;
+            min-width: 780px;
+        }
+
+        thead th {
+            position: sticky;
+            top: 0;
+            background: var(--bg-raised);
+            padding: 10px 12px;
+            text-align: left;
+            font-size: 10px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--text-label);
+            border-bottom: 1px solid var(--border-mid);
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        tbody tr { transition: background 0.1s; }
+        tbody tr:hover td { background: var(--bg-raised); }
+        tbody tr.current-match td { background: rgba(13,53,117,0.18); }
+        tbody tr.current-match td:first-child {
+            border-left: 3px solid #1a5bc7;
+            padding-left: 9px;
+        }
+
+        td {
+            padding: 8px 12px;
+            border-bottom: 1px solid var(--border-subtle);
+            color: var(--text-primary);
+            vertical-align: middle;
+            white-space: nowrap;
+        }
+        tbody tr:last-child td { border-bottom: none; }
+
+        .match-name { font-weight: 700; font-size: 12px; }
+        .match-name.current { color: var(--text-accent); }
+
+        .alliance-cell { display: flex; flex-direction: column; gap: 2px; }
+        .team-tag {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 1px 6px;
+            border-radius: 3px;
+            margin-right: 3px;
+        }
+        .team-tag.red  { background: rgba(180,40,40,0.18);  color: #ee6666; border: 1px solid rgba(180,40,40,0.3); }
+        .team-tag.blue { background: rgba(40,80,200,0.18);  color: #6699ee; border: 1px solid rgba(40,80,200,0.3); }
+
+        .score-cell { text-align: center; font-size: 13px; font-weight: 700; }
+        .score-red  { color: #ee5555; }
+        .score-blue { color: #5588ee; }
+        .score-sep  { color: var(--text-muted); font-size: 11px; font-weight: 400; margin: 0 4px; }
+
+        .winner-badge {
+            display: inline-block;
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            padding: 2px 6px;
+            border-radius: 3px;
+            text-transform: uppercase;
+        }
+        .winner-badge.red  { background: rgba(180,40,40,0.25); color: #ee5555; border: 1px solid #441a1a; }
+        .winner-badge.blue { background: rgba(40,80,200,0.25); color: #5588ee; border: 1px solid #1a2a55; }
+        .winner-badge.tie  { background: var(--bg-raised); color: var(--text-muted); border: 1px solid var(--border-mid); }
+        .winner-badge.pending { color: var(--text-muted); border: 1px solid var(--border-subtle); background: transparent; }
+
+        .status-dot {
+            display: inline-block;
+            width: 7px; height: 7px;
+            border-radius: 50%;
+            margin-right: 5px;
+            vertical-align: middle;
+        }
+        .status-dot.played   { background: #22cc44; }
+        .status-dot.current  { background: #1a5bc7; animation: blink 1.5s ease-in-out infinite; }
+        .status-dot.upcoming { background: var(--border-mid); }
+
+        .empty-msg {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-muted);
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="top-bar">
+    <div class="brand">
+        <img src="{{ url_for('static', filename='favicon.ico') }}" alt="" width="28" height="28" style="flex-shrink:0;">
+        <h1>Match Schedule</h1>
+    </div>
+    <div class="top-bar-right">
+        <div class="event-label">Event: <span id="eventLabel">—</span></div>
+        <div class="refresh-indicator">
+            <div class="refresh-dot"></div>
+            <span id="refreshLabel">Auto-refresh: 30s</span>
+        </div>
+        <button class="topbar-btn" id="refreshBtn">↻ Refresh Now</button>
+        <a href="/" class="topbar-btn">← Control Panel</a>
+    </div>
+</div>
+
+<div class="main">
+    <div class="toolbar">
+        <input type="text" class="search-input" id="searchInput" placeholder="Search teams or match…">
+        <div class="filter-btns">
+            <button class="filter-btn active" data-filter="all">All</button>
+            <button class="filter-btn" data-filter="qm">Quals</button>
+            <button class="filter-btn" data-filter="sf">Semis</button>
+            <button class="filter-btn" data-filter="f">Finals</button>
+            <button class="filter-btn" data-filter="played">Played</button>
+            <button class="filter-btn" data-filter="upcoming">Upcoming</button>
+        </div>
+        <span class="match-count" id="matchCount"></span>
+    </div>
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Match</th>
+                    <th>Red Alliance</th>
+                    <th>Blue Alliance</th>
+                    <th style="text-align:center;">Score</th>
+                    <th>Result</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody id="matchBody"></tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    let matchesData = {};
+    let currentMatch = '';
+    let activeFilter = 'all';
+    let searchVal = '';
+    let countdownTimer;
+
+    function fetchMatches() {
+        fetch('/api/matches')
+            .then(r => r.json())
+            .then(data => {
+                matchesData = data.matches || {};
+                currentMatch = data.current_match || '';
+                const label = data.event_name || data.event_key || '—';
+                document.getElementById('eventLabel').textContent = label;
+                renderTable();
+                scheduleCountdown();
+            })
+            .catch(() => {});
+    }
+
+    function sortedKeys() {
+        const levelOrder = { qm: 0, sf: 1, f: 2 };
+        return Object.keys(matchesData).sort((a, b) => {
+            const ma = matchesData[a], mb = matchesData[b];
+            const la = levelOrder[ma.comp_level] ?? 9;
+            const lb = levelOrder[mb.comp_level] ?? 9;
+            if (la !== lb) return la - lb;
+            if (ma.set_number !== mb.set_number) return ma.set_number - mb.set_number;
+            return ma.match_number - mb.match_number;
+        });
+    }
+
+    function matchName(m) {
+        if (m.custom_name) return m.custom_name;
+        if (m.comp_level === 'qm') return `QM ${m.match_number}`;
+        if (m.comp_level === 'sf') return `SF ${m.set_number}-${m.match_number}`;
+        if (m.comp_level === 'f')  return `F ${m.match_number}`;
+        return `${(m.comp_level||'').toUpperCase()} ${m.set_number}-${m.match_number}`;
+    }
+
+    function renderTable() {
+        const f = searchVal.toLowerCase();
+        const keys = sortedKeys().filter(k => {
+            const m = matchesData[k];
+            const teams = [
+                ...(m.alliances?.red?.team_keys || []),
+                ...(m.alliances?.blue?.team_keys || [])
+            ].map(t => t.replace('frc', ''));
+
+            if (f && !matchName(m).toLowerCase().includes(f) && !teams.some(t => t.includes(f))) return false;
+
+            if (activeFilter === 'qm') return m.comp_level === 'qm';
+            if (activeFilter === 'sf') return m.comp_level === 'sf';
+            if (activeFilter === 'f')  return m.comp_level === 'f';
+            if (activeFilter === 'played')   return m.winning_alliance !== null && m.winning_alliance !== undefined;
+            if (activeFilter === 'upcoming') return m.winning_alliance === null || m.winning_alliance === undefined;
+            return true;
+        });
+
+        document.getElementById('matchCount').textContent = `${keys.length} match${keys.length !== 1 ? 'es' : ''}`;
+
+        const tbody = document.getElementById('matchBody');
+        if (!keys.length) {
+            tbody.innerHTML = `<tr><td colspan="6" class="empty-msg">No matches found</td></tr>`;
+            return;
+        }
+
+        tbody.innerHTML = keys.map(k => {
+            const m = matchesData[k];
+            const isCurrent = k === currentMatch;
+            const played = m.winning_alliance !== null && m.winning_alliance !== undefined;
+
+            const red  = (m.alliances?.red?.team_keys  || []).map(t => t.replace('frc',''));
+            const blue = (m.alliances?.blue?.team_keys || []).map(t => t.replace('frc',''));
+            const rs = (m.alliances?.red?.score  ?? -1);
+            const bs = (m.alliances?.blue?.score ?? -1);
+
+            const redStr  = red.map(t  => `<span class="team-tag red">${t}</span>`).join('');
+            const blueStr = blue.map(t => `<span class="team-tag blue">${t}</span>`).join('');
+
+            let scoreHtml = '<span style="color:var(--text-muted)">—</span>';
+            if (played) {
+                const rDisp = rs >= 0 ? rs : '?';
+                const bDisp = bs >= 0 ? bs : '?';
+                scoreHtml = `<span class="score-red">${rDisp}</span><span class="score-sep">–</span><span class="score-blue">${bDisp}</span>`;
+            }
+
+            let winnerHtml;
+            if (!played) {
+                winnerHtml = `<span class="winner-badge pending">Pending</span>`;
+            } else if (m.winning_alliance === '') {
+                winnerHtml = `<span class="winner-badge tie">Tie</span>`;
+            } else {
+                winnerHtml = `<span class="winner-badge ${m.winning_alliance}">${m.winning_alliance === 'red' ? '🔴 Red' : '🔵 Blue'}</span>`;
+            }
+
+            let statusHtml;
+            if (isCurrent) {
+                statusHtml = `<span class="status-dot current"></span>Active`;
+            } else if (played) {
+                statusHtml = `<span class="status-dot played"></span>Played`;
+            } else {
+                statusHtml = `<span class="status-dot upcoming"></span>Upcoming`;
+            }
+
+            return `<tr class="${isCurrent ? 'current-match' : ''}">
+                <td class="match-name ${isCurrent ? 'current' : ''}">${esc(matchName(m))}</td>
+                <td>${redStr}</td>
+                <td>${blueStr}</td>
+                <td class="score-cell">${scoreHtml}</td>
+                <td>${winnerHtml}</td>
+                <td style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-secondary);">${statusHtml}</td>
+            </tr>`;
+        }).join('');
+    }
+
+    // ── FILTER BUTTONS ──
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            activeFilter = btn.dataset.filter;
+            renderTable();
+        });
+    });
+
+    // ── SEARCH ──
+    document.getElementById('searchInput').addEventListener('input', e => {
+        searchVal = e.target.value;
+        renderTable();
+    });
+
+    // ── REFRESH COUNTDOWN ──
+    function scheduleCountdown() {
+        clearInterval(countdownTimer);
+        let countdown = 30;
+        document.getElementById('refreshLabel').textContent = `Auto-refresh: ${countdown}s`;
+        countdownTimer = setInterval(() => {
+            countdown--;
+            document.getElementById('refreshLabel').textContent = `Auto-refresh: ${countdown}s`;
+            if (countdown <= 0) {
+                clearInterval(countdownTimer);
+                fetchMatches();
+            }
+        }, 1000);
+    }
+
+    document.getElementById('refreshBtn').addEventListener('click', () => {
+        clearInterval(countdownTimer);
+        fetchMatches();
+    });
+
+    function esc(s) {
+        return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    fetchMatches();
+</script>
+</body>
+</html>

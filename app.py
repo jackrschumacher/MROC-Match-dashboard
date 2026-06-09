@@ -194,9 +194,10 @@ def sync_event_data(event_key):
         matches_data["current_match"] = ""
     
     add_log("Saving fresh data to local JSON files...")
+    matches_data["last_full_sync"] = datetime.now().strftime("%b %d %I:%M:%S %p")
     save_matches(matches_data)
     save_teams(event_teams)
-    
+
     add_log("Sync Complete!")
     return True, "Data synchronized successfully!"
 
@@ -278,6 +279,13 @@ def format_match_name(match):
         return f"Finals Match {match_num}"
     return f"{level.upper()}{set_num}-{match_num}"
 
+# --- LOGO HELPER ---
+
+def get_logo(team_key, teams_data):
+    """Return logo filename if the team has a logo and logo_enabled is True (default)."""
+    t = teams_data.get(team_key, {})
+    return t.get("logo", "") if t.get("logo_enabled", True) else ""
+
 # --- CORE API ROUTES ---
 
 @app.route("/")
@@ -286,6 +294,38 @@ def control_panel():
     teams_data = load_teams()
     data = {**matches_data, "event_teams": teams_data}
     return render_template("control.html", data=data)
+
+@app.route("/teams")
+def team_setup():
+    teams_data = load_teams()
+    return render_template("teams.html", teams=teams_data)
+
+@app.route("/api/teams")
+def api_teams():
+    return jsonify(load_teams())
+
+@app.route("/matches")
+def matches_page():
+    return render_template("matches.html")
+
+@app.route("/api/sync_times")
+def api_sync_times():
+    matches_data = load_matches()
+    return jsonify({
+        "last_full_sync":  matches_data.get("last_full_sync",  "Never"),
+        "last_score_sync": matches_data.get("last_score_sync", "Never"),
+        "event_key":       matches_data.get("event_key", ""),
+    })
+
+@app.route("/api/matches")
+def api_matches():
+    matches_data = load_matches()
+    return jsonify({
+        "event_key":     matches_data.get("event_key", ""),
+        "event_name":    matches_data.get("event_name", ""),
+        "current_match": matches_data.get("current_match", ""),
+        "matches":       matches_data.get("event_matches", {}),
+    })
 
 @app.route("/api/debug/match_breakdown")
 def debug_match_breakdown():
@@ -378,35 +418,41 @@ def api_active_match():
     
     def get_epa(team_key):
         return teams_data.get(team_key, {}).get("epa", 0.0)
-    
+
     def get_team_name(team_key):
         return teams_data.get(team_key, {}).get("team_name", "")
 
     red_keys = match["alliances"]["red"]["team_keys"]
     blue_keys = match["alliances"]["blue"]["team_keys"]
-    
+
     output = {
         "match_name": format_match_name(match),
-        
+
         "red_1": red_keys[0].replace("frc", ""),
         "red_1_name": get_team_name(red_keys[0]),
+        "red_1_logo": get_logo(red_keys[0], teams_data),
         "red_1_epa": get_epa(red_keys[0]),
         "red_2": red_keys[1].replace("frc", ""),
         "red_2_name": get_team_name(red_keys[1]),
+        "red_2_logo": get_logo(red_keys[1], teams_data),
         "red_2_epa": get_epa(red_keys[1]),
         "red_3": red_keys[2].replace("frc", ""),
         "red_3_name": get_team_name(red_keys[2]),
+        "red_3_logo": get_logo(red_keys[2], teams_data),
         "red_3_epa": get_epa(red_keys[2]),
         "red_score": match["alliances"]["red"].get("score", 0),
-        
+
         "blue_1": blue_keys[0].replace("frc", ""),
         "blue_1_name": get_team_name(blue_keys[0]),
+        "blue_1_logo": get_logo(blue_keys[0], teams_data),
         "blue_1_epa": get_epa(blue_keys[0]),
         "blue_2": blue_keys[1].replace("frc", ""),
         "blue_2_name": get_team_name(blue_keys[1]),
+        "blue_2_logo": get_logo(blue_keys[1], teams_data),
         "blue_2_epa": get_epa(blue_keys[1]),
         "blue_3": blue_keys[2].replace("frc", ""),
         "blue_3_name": get_team_name(blue_keys[2]),
+        "blue_3_logo": get_logo(blue_keys[2], teams_data),
         "blue_3_epa": get_epa(blue_keys[2]),
         "blue_score": match["alliances"]["blue"].get("score", 0),
     }
@@ -420,11 +466,14 @@ def api_active_match():
 def api_team_profile(team_number):
     teams_data = load_teams()
     team_key = f"frc{team_number}"
-    
+
     if team_key not in teams_data:
         return jsonify({"error": "Team not found in current event data"})
-        
-    return jsonify(teams_data[team_key])
+
+    result = dict(teams_data[team_key])
+    # Computed logo field that respects the logo_enabled toggle
+    result["logo_display"] = get_logo(team_key, teams_data)
+    return jsonify(result)
 
 @app.route("/api/h2h/<team_a_number>/<team_b_number>.json")
 def api_h2h(team_a_number, team_b_number):
@@ -441,14 +490,16 @@ def api_h2h(team_a_number, team_b_number):
     output = {
         "team_a_number": team_a_number,
         "team_a_name": profile_a.get("team_name", ""),
+        "team_a_logo": get_logo(team_a_key, teams_data),
         "team_a_event_wlt": profile_a.get("event_wlt", ""),
         "team_a_epa": profile_a.get("epa", ""),
-        
+
         "team_b_number": team_b_number,
         "team_b_name": profile_b.get("team_name", ""),
+        "team_b_logo": get_logo(team_b_key, teams_data),
         "team_b_event_wlt": profile_b.get("event_wlt", ""),
         "team_b_epa": profile_b.get("epa", ""),
-        
+
         "h2h_2026": h2h_stats["h2h_2026"],
         "h2h_since_2022": h2h_stats["h2h_since_2022"]
     }
@@ -490,7 +541,9 @@ def api_import_schedule():
             parts = s[1:].split("-")
             return "f", int(parts[0]), int(parts[1]) if len(parts) > 1 else 1
         else:
-            num = s.replace("QM", "").replace("-", "")
+            # Strip all non-digit characters — handles QM1, Q1, plain numbers,
+            # and the "Q-1" artifact caused by the M→- replacement above
+            num = ''.join(c for c in s if c.isdigit())
             return "qm", 1, int(num)
 
     def norm(t):
@@ -603,6 +656,7 @@ def api_sync_scores():
         if tk in teams_data:
             teams_data[tk]["event_wlt"] = f"{rec[0]}-{rec[1]}-{rec[2]}"
 
+    matches_data["last_score_sync"] = datetime.now().strftime("%b %d %I:%M:%S %p")
     save_matches(matches_data)
     save_teams(teams_data)
     add_log(f"Score sync: updated {updated} match result(s) from TBA.")
@@ -687,7 +741,7 @@ def api_edit_team():
     teams_data = load_teams()
     if team_key not in teams_data:
         return jsonify({"status": "error", "message": "Team not found"}), 404
-    allowed = {"team_name", "epa", "avg_auto_score", "avg_teleop_score", "avg_match_score", "season_wlt", "event_wlt"}
+    allowed = {"team_name", "logo", "logo_enabled", "notes", "epa", "avg_auto_score", "avg_teleop_score", "avg_match_score", "season_wlt", "event_wlt"}
     teams_data[team_key].update({k: v for k, v in updates.items() if k in allowed})
     save_teams(teams_data)
     add_log(f"Manual edit: updated {team_key}")
@@ -730,9 +784,11 @@ def api_rankings():
             "rank":        rank,
             "team_number": team["team_number"],
             "team_name":   team["team_name"],
+            "logo":        get_logo(tk, teams_data),
             "record":      team.get("event_wlt", "0-0-0"),
+            "epa":         team.get("epa", 0.0),
         }
-        for rank, (_, team) in enumerate(ranked, 1)
+        for rank, (tk, team) in enumerate(ranked, 1)
     ])
 
 # --- STARTUP ROUTINE ---
