@@ -285,6 +285,51 @@
             font-family: 'IBM Plex Mono', monospace;
             font-size: 12px;
         }
+
+        /* ── INLINE EDIT (played matches only) ── */
+        .score-mini {
+            width: 54px;
+            padding: 5px 6px;
+            border-radius: 3px;
+            border: 1px solid var(--border-mid);
+            background: var(--bg-input);
+            color: var(--text-primary);
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 13px;
+            font-weight: 700;
+            text-align: center;
+            outline: none;
+            -moz-appearance: textfield;
+            transition: border-color 0.15s;
+        }
+        .score-mini::-webkit-inner-spin-button,
+        .score-mini::-webkit-outer-spin-button { -webkit-appearance: none; }
+        .score-mini.red  { border-color: #441a1a; background: rgba(180,40,40,0.07); color: #ee5555; }
+        .score-mini.red:focus  { border-color: #ee5555; }
+        .score-mini.blue { border-color: #1a2a55; background: rgba(40,80,200,0.07); color: #5588ee; }
+        .score-mini.blue:focus { border-color: #5588ee; }
+
+        .score-edit-pair { display: flex; align-items: center; gap: 4px; justify-content: center; }
+
+        .btn-row {
+            padding: 4px 10px;
+            border-radius: 3px;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.12s;
+        }
+        .btn-row-edit   { background: transparent; border: 1px solid var(--border-mid); color: var(--text-muted); margin-left: 6px; }
+        .btn-row-edit:hover   { color: var(--text-secondary); border-color: var(--border-accent); }
+        .btn-row-save   { background: #0a1f0d; border: 1px solid #1a4422; color: #44dd66; margin-right: 4px; }
+        .btn-row-save:hover   { background: #0d2912; }
+        .btn-row-cancel { background: transparent; border: 1px solid var(--border-mid); color: var(--text-muted); }
+        .btn-row-cancel:hover { color: var(--text-primary); }
+
     </style>
 </head>
 <body>
@@ -342,6 +387,7 @@
     let activeFilter = 'all';
     let searchVal = '';
     let countdownTimer;
+    const editingMatches = new Set();
 
     function fetchMatches() {
         fetch('/api/matches')
@@ -407,30 +453,37 @@
         tbody.innerHTML = keys.map(k => {
             const m = matchesData[k];
             const isCurrent = k === currentMatch;
-            const played = m.winning_alliance !== null && m.winning_alliance !== undefined;
+            const played    = m.winning_alliance !== null && m.winning_alliance !== undefined;
+            const isEditing = editingMatches.has(k);
 
             const red  = (m.alliances?.red?.team_keys  || []).map(t => t.replace('frc',''));
             const blue = (m.alliances?.blue?.team_keys || []).map(t => t.replace('frc',''));
-            const rs = (m.alliances?.red?.score  ?? -1);
-            const bs = (m.alliances?.blue?.score ?? -1);
+            const rs = m.alliances?.red?.score  ?? -1;
+            const bs = m.alliances?.blue?.score ?? -1;
 
             const redStr  = red.map(t  => `<span class="team-tag red">${t}</span>`).join('');
             const blueStr = blue.map(t => `<span class="team-tag blue">${t}</span>`).join('');
 
-            let scoreHtml = '<span style="color:var(--text-muted)">—</span>';
-            if (played) {
+            let scoreHtml, winnerHtml;
+            if (played && isEditing) {
+                const preR = rs >= 0 ? rs : '';
+                const preB = bs >= 0 ? bs : '';
+                scoreHtml  = `<div class="score-edit-pair">
+                    <input class="score-mini red"  type="number" min="0" placeholder="—" value="${preR}">
+                    <span class="score-sep">–</span>
+                    <input class="score-mini blue" type="number" min="0" placeholder="—" value="${preB}">
+                </div>`;
+                winnerHtml = `<button class="btn-row btn-row-save"   data-save="${k}">✓ Save</button><button class="btn-row btn-row-cancel" data-cancel="${k}">✕</button>`;
+            } else if (played) {
                 const rDisp = rs >= 0 ? rs : '?';
                 const bDisp = bs >= 0 ? bs : '?';
-                scoreHtml = `<span class="score-red">${rDisp}</span><span class="score-sep">–</span><span class="score-blue">${bDisp}</span>`;
-            }
-
-            let winnerHtml;
-            if (!played) {
-                winnerHtml = `<span class="winner-badge pending">Pending</span>`;
-            } else if (m.winning_alliance === '') {
-                winnerHtml = `<span class="winner-badge tie">Tie</span>`;
+                scoreHtml  = `<span class="score-red">${rDisp}</span><span class="score-sep">–</span><span class="score-blue">${bDisp}</span>`;
+                const winLabel = m.winning_alliance === '' ? 'Tie' : m.winning_alliance === 'red' ? '🔴 Red' : '🔵 Blue';
+                const winClass = m.winning_alliance === '' ? 'tie' : m.winning_alliance;
+                winnerHtml = `<span class="winner-badge ${winClass}">${winLabel}</span><button class="btn-row btn-row-edit" data-edit="${k}">✎</button>`;
             } else {
-                winnerHtml = `<span class="winner-badge ${m.winning_alliance}">${m.winning_alliance === 'red' ? '🔴 Red' : '🔵 Blue'}</span>`;
+                scoreHtml  = `<span class="score-sep">—</span>`;
+                winnerHtml = `<span class="winner-badge pending">Pending</span>`;
             }
 
             let statusHtml;
@@ -442,7 +495,7 @@
                 statusHtml = `<span class="status-dot upcoming"></span>Upcoming`;
             }
 
-            return `<tr class="${isCurrent ? 'current-match' : ''}">
+            return `<tr class="${isCurrent ? 'current-match' : ''}" data-key="${k}">
                 <td class="match-name ${isCurrent ? 'current' : ''}">${esc(matchName(m))}</td>
                 <td>${redStr}</td>
                 <td>${blueStr}</td>
@@ -452,6 +505,53 @@
             </tr>`;
         }).join('');
     }
+
+    // ── EDIT PLAYED MATCHES ──
+    function scoresFromRow(key) {
+        const row = document.querySelector(`tr[data-key="${CSS.escape(key)}"]`);
+        if (!row) return null;
+        const r = row.querySelector('.score-mini.red');
+        const b = row.querySelector('.score-mini.blue');
+        if (!r || !b || r.value === '' || b.value === '') return null;
+        return { red: parseInt(r.value, 10), blue: parseInt(b.value, 10) };
+    }
+
+    function saveEdit(key) {
+        const scores = scoresFromRow(key);
+        if (!scores) return;
+        const winner = scores.red > scores.blue ? 'red' : scores.blue > scores.red ? 'blue' : '';
+        fetch('/api/set_match_result', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ match_key: key, winner, red_score: scores.red, blue_score: scores.blue })
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.status === 'success') {
+                matchesData[key].winning_alliance    = winner;
+                matchesData[key].alliances.red.score  = scores.red;
+                matchesData[key].alliances.blue.score = scores.blue;
+                editingMatches.delete(key);
+                renderTable();
+            }
+        })
+        .catch(() => {});
+    }
+
+    document.getElementById('matchBody').addEventListener('click', e => {
+        const editBtn   = e.target.closest('[data-edit]');
+        const saveBtn   = e.target.closest('[data-save]');
+        const cancelBtn = e.target.closest('[data-cancel]');
+        if (editBtn)   { editingMatches.add(editBtn.dataset.edit);       renderTable(); const row = document.querySelector(`tr[data-key="${CSS.escape(editBtn.dataset.edit)}"]`); row?.querySelector('.score-mini.red')?.focus(); }
+        if (saveBtn)   { saveEdit(saveBtn.dataset.save); }
+        if (cancelBtn) { editingMatches.delete(cancelBtn.dataset.cancel); renderTable(); }
+    });
+
+    document.getElementById('matchBody').addEventListener('keydown', e => {
+        if (e.key !== 'Enter') return;
+        const row = e.target.closest('tr[data-key]');
+        if (row) saveEdit(row.dataset.key);
+    });
 
     // ── FILTER BUTTONS ──
     document.querySelectorAll('.filter-btn').forEach(btn => {

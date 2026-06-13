@@ -239,6 +239,51 @@ def calculate_h2h(team_a_key, team_b_key):
         "h2h_since_2022": f"{wlt_since_2022[0]}-{wlt_since_2022[1]}-{wlt_since_2022[2]}"
     }
 
+# --- TEAM ROSTER BUILDER ---
+
+def sync_teams_from_roster(team_numbers, year):
+    """Fetch TBA name + Statbotics EPA for a list of team numbers and populate teams.json.
+    Preserves any existing logo / notes / logo_enabled values."""
+    add_log(f"Building team data for {len(team_numbers)} teams (year {year})...")
+    teams_data = load_teams()
+    total = len(team_numbers)
+
+    for i, num in enumerate(team_numbers, 1):
+        tk = f"frc{num}"
+        add_log(f"Fetching team {num} ({i}/{total})...")
+
+        tba_team = fetch_from_tba(f"team/{tk}/simple")
+        team_name = tba_team.get("nickname", f"Team {num}") if tba_team else f"Team {num}"
+
+        sb_data = fetch_statbotics_epa(tk, str(year))
+        epa_obj    = sb_data.get("epa") or {}
+        record_obj = sb_data.get("record") or {}
+        total_pts  = epa_obj.get("total_points") or {}
+        stats      = epa_obj.get("stats") or {}
+        epa    = total_pts.get("mean") or stats.get("pre_champs") or 0.0
+        wins   = record_obj.get("wins",   0) or 0
+        losses = record_obj.get("losses", 0) or 0
+        ties   = record_obj.get("ties",   0) or 0
+
+        existing = teams_data.get(tk, {})
+        teams_data[tk] = {
+            "team_number":      num,
+            "team_name":        team_name,
+            "logo":             existing.get("logo", ""),
+            "logo_enabled":     existing.get("logo_enabled", True),
+            "notes":            existing.get("notes", ""),
+            "season_wlt":       f"{wins}-{losses}-{ties}",
+            "event_wlt":        existing.get("event_wlt", "0-0-0"),
+            "epa":              round(float(epa), 1),
+            "avg_auto_score":   existing.get("avg_auto_score", 0.0),
+            "avg_teleop_score": existing.get("avg_teleop_score", 0.0),
+            "avg_match_score":  existing.get("avg_match_score", 0.0),
+        }
+
+    save_teams(teams_data)
+    add_log(f"Team build complete — {total} teams saved.")
+    return True, f"Built data for {total} teams."
+
 # --- MATCH ORDERING ---
 
 def sorted_match_keys(event_matches):
@@ -529,8 +574,9 @@ def api_import_schedule():
 
     matches_data = load_matches()
     event_key = matches_data.get("event_key", "")
-    if not event_key:
-        return jsonify({"status": "error", "message": "No event key set. Configure it in Event Setup first."}), 400
+    # Use a generic prefix when no TBA event key is configured so CSV imports
+    # work in fully offline / manual-schedule mode.
+    prefix = event_key if event_key else "local"
 
     def parse_match_id(s):
         s = s.strip().upper().replace("M", "-")
@@ -569,7 +615,7 @@ def api_import_schedule():
         blue_keys = [k for k in [norm(row.get("blue1","")), norm(row.get("blue2","")), norm(row.get("blue3",""))] if k]
 
         suffix = f"qm{match_num}" if comp_level == "qm" else f"{comp_level}{set_num}m{match_num}"
-        match_key = f"{event_key}_{suffix}"
+        match_key = f"{prefix}_{suffix}"
 
         existing = matches_data["event_matches"].get(match_key, {})
         existing_alliances = existing.get("alliances", {})
@@ -591,11 +637,47 @@ def api_import_schedule():
         imported += 1
 
     save_matches(matches_data)
-    add_log(f"CSV import: {imported} matches imported for {event_key}")
+    add_log(f"CSV import: {imported} matches imported (prefix: {prefix})")
     msg = f"Imported {imported} match(es)."
     if errors:
         msg += " Errors: " + "; ".join(errors[:3])
     return jsonify({"status": "success", "message": msg, "imported": imported})
+
+@app.route("/api/import/teams_from_schedule", methods=["POST"])
+def api_import_teams_from_schedule():
+    global sync_state
+    if sync_state["running"]:
+        return jsonify({"status": "error", "message": "A sync is already in progress."}), 409
+
+    matches_data = load_matches()
+    event_matches = matches_data.get("event_matches", {})
+    event_key = matches_data.get("event_key", "")
+
+    if not event_matches:
+        return jsonify({"status": "error", "message": "No matches imported yet. Import a schedule first."}), 400
+
+    team_numbers = set()
+    for match in event_matches.values():
+        for side in ["red", "blue"]:
+            for tk in match.get("alliances", {}).get(side, {}).get("team_keys", []):
+                num = tk.replace("frc", "")
+                if num.isdigit():
+                    team_numbers.add(int(num))
+
+    if not team_numbers:
+        return jsonify({"status": "error", "message": "No team numbers found in schedule."}), 400
+
+    year = event_key[:4] if len(event_key) >= 4 else str(datetime.now().year)
+    team_list = sorted(team_numbers)
+
+    def _run():
+        global sync_state
+        sync_state = {"running": True, "success": None, "message": ""}
+        success, message = sync_teams_from_roster(team_list, year)
+        sync_state = {"running": False, "success": success, "message": message}
+
+    threading.Thread(target=_run, daemon=True).start()
+    return jsonify({"status": "started", "team_count": len(team_list)})
 
 @app.route("/api/reset/schedule", methods=["POST"])
 def api_reset_schedule():

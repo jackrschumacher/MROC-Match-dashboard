@@ -1047,23 +1047,7 @@
                         <input type="number" id="blueScoreInput" min="0" placeholder="—">
                     </div>
                 </div>
-                <!-- TIE SCORE PROMPT (shown when Tie is clicked) -->
-                <div id="tieScorePrompt" style="display:none; margin-bottom:6px; padding:10px 12px; background:var(--bg-raised); border:1px solid var(--border-mid); border-radius:4px;">
-                    <label style="margin-bottom:6px; font-size:10px; color:var(--text-label);">Tied Score (both alliances)</label>
-                    <div style="display:flex; gap:8px; align-items:center;">
-                        <input type="number" id="tieScoreInput" min="0" placeholder="0"
-                               style="flex:1; margin-bottom:0; text-align:center; font-size:15px; font-weight:700; padding:8px;">
-                        <button type="button" id="confirmTieBtn"
-                                style="flex:0 0 auto; padding:9px 16px; border-radius:4px; cursor:pointer; font-family:'IBM Plex Mono',monospace; font-size:11px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; background:var(--bg-btn); border:1px solid var(--border-accent); color:var(--text-btn); transition:all 0.15s;">✓ Confirm</button>
-                        <button type="button" id="cancelTieBtn"
-                                style="flex:0 0 auto; padding:9px 12px; border-radius:4px; cursor:pointer; font-family:'IBM Plex Mono',monospace; font-size:11px; font-weight:700; background:var(--bg-raised); border:1px solid var(--border-mid); color:var(--text-muted); transition:all 0.15s;">✕</button>
-                    </div>
-                </div>
-                <div class="result-row" style="margin-top:8px;">
-                    <button type="button" class="result-btn result-btn-red"  id="winRedBtn">🔴 Red Wins</button>
-                    <button type="button" class="result-btn result-btn-blue" id="winBlueBtn">🔵 Blue Wins</button>
-                    <button type="button" class="result-btn result-btn-tie"  id="winTieBtn" style="flex:0 0 auto; padding-left:14px; padding-right:14px;">Tie</button>
-                </div>
+                <button type="button" class="btn-primary" id="submitResultBtn" style="margin-top:8px;">▶ Submit Result</button>
                 <div id="resultStatus" class="status"></div>
             </div>
 
@@ -1212,6 +1196,7 @@ F1-1,1234,5678,9012,3456,7890,1122</code>
                     <textarea id="csvTextarea" placeholder="…or paste CSV here"></textarea>
                     <div class="csv-actions">
                         <button type="button" id="csvImportBtn">⬆ Import Schedule</button>
+                        <button type="button" id="buildTeamsBtn">⬇ Build Team Data</button>
                         <button type="button" id="clearScheduleBtn">✕ Clear Schedule</button>
                     </div>
                     <div id="csvImportStatus" class="status"></div>
@@ -1373,7 +1358,6 @@ F1-1,1234,5678,9012,3456,7890,1122</code>
                     statusDiv.textContent = `✓ ${label} recorded. Advancing…`;
                     document.getElementById('redScoreInput').value = '';
                     document.getElementById('blueScoreInput').value = '';
-                    document.getElementById('tieScorePrompt').style.display = 'none';
                     if (data.next_match) {
                         document.getElementById('match_key').value = data.next_match;
                         renderActiveMatch();
@@ -1392,46 +1376,21 @@ F1-1,1234,5678,9012,3456,7890,1122</code>
             });
         }
 
-        document.getElementById('winRedBtn').addEventListener('click',  () => setMatchResult('red'));
-        document.getElementById('winBlueBtn').addEventListener('click', () => setMatchResult('blue'));
-
-        // Tie — ask for a single shared score if not already filled in equally
-        document.getElementById('winTieBtn').addEventListener('click', () => {
+        // ── SUBMIT RESULT (auto-determines winner from scores) ──
+        document.getElementById('submitResultBtn').addEventListener('click', () => {
+            const statusDiv = document.getElementById('resultStatus');
             const redRaw  = document.getElementById('redScoreInput').value.trim();
             const blueRaw = document.getElementById('blueScoreInput').value.trim();
-            // Both filled and equal → proceed immediately
-            if (redRaw !== '' && blueRaw !== '' && redRaw === blueRaw) {
-                setMatchResult('');
+            if (redRaw === '' || blueRaw === '') {
+                statusDiv.className = 'status error';
+                statusDiv.style.display = 'block';
+                statusDiv.textContent = '✕ Enter both scores first.';
                 return;
             }
-            // Show prompt, pre-fill from whichever score field has a value
-            const prompt = document.getElementById('tieScorePrompt');
-            document.getElementById('tieScoreInput').value = redRaw || blueRaw || '';
-            prompt.style.display = 'block';
-            document.getElementById('tieScoreInput').focus();
-        });
-
-        document.getElementById('confirmTieBtn').addEventListener('click', () => {
-            const score = document.getElementById('tieScoreInput').value.trim();
-            document.getElementById('tieScorePrompt').style.display = 'none';
-            document.getElementById('tieScoreInput').value = '';
-            // Copy tied score into both alliance fields so setMatchResult can pick them up
-            if (score !== '') {
-                document.getElementById('redScoreInput').value  = score;
-                document.getElementById('blueScoreInput').value = score;
-            }
-            setMatchResult('');
-        });
-
-        document.getElementById('cancelTieBtn').addEventListener('click', () => {
-            document.getElementById('tieScorePrompt').style.display = 'none';
-            document.getElementById('tieScoreInput').value = '';
-        });
-
-        // Enter / Escape shortcuts inside the tie score input
-        document.getElementById('tieScoreInput').addEventListener('keydown', e => {
-            if (e.key === 'Enter')  document.getElementById('confirmTieBtn').click();
-            if (e.key === 'Escape') document.getElementById('cancelTieBtn').click();
+            const rs = parseInt(redRaw, 10);
+            const bs = parseInt(blueRaw, 10);
+            const winner = rs > bs ? 'red' : bs > rs ? 'blue' : '';
+            setMatchResult(winner);
         });
 
         // ── SYNC SCORES BUTTON + AUTO-SYNC ──
@@ -1584,6 +1543,61 @@ F1-1,1234,5678,9012,3456,7890,1122</code>
                     showCsvStatus('error', '✕ Connection error.');
                 });
         });
+
+        // ── BUILD TEAM DATA FROM SCHEDULE ──
+        document.getElementById('buildTeamsBtn').addEventListener('click', function () {
+            const btn = this;
+            const statusDiv = document.getElementById('csvImportStatus');
+            btn.textContent = '⬇ Fetching…';
+            btn.disabled = true;
+            if (!logsVisible) toggleLogsBtn.click();
+
+            fetch('/api/import/teams_from_schedule', { method: 'POST' })
+                .then(r => r.json())
+                .then(data => {
+                    if (data.status === 'started') {
+                        statusDiv.className = 'status pending';
+                        statusDiv.style.display = 'block';
+                        statusDiv.textContent = `Fetching TBA + Statbotics for ${data.team_count} teams — watch logs…`;
+                        pollBuildTeams(btn, statusDiv);
+                    } else {
+                        statusDiv.className = 'status error';
+                        statusDiv.style.display = 'block';
+                        statusDiv.textContent = '✕ ' + data.message;
+                        btn.textContent = '⬇ Build Team Data';
+                        btn.disabled = false;
+                    }
+                })
+                .catch(() => {
+                    statusDiv.className = 'status error';
+                    statusDiv.style.display = 'block';
+                    statusDiv.textContent = '✕ Connection error.';
+                    btn.textContent = '⬇ Build Team Data';
+                    btn.disabled = false;
+                });
+        });
+
+        function pollBuildTeams(btn, statusDiv) {
+            fetch('/api/sync_status')
+                .then(r => r.json())
+                .then(state => {
+                    if (state.running) {
+                        setTimeout(() => pollBuildTeams(btn, statusDiv), 1000);
+                    } else if (state.success) {
+                        statusDiv.className = 'status success';
+                        statusDiv.textContent = '✓ ' + state.message;
+                        btn.textContent = '⬇ Build Team Data';
+                        btn.disabled = false;
+                        setTimeout(() => location.reload(), 1500);
+                    } else {
+                        statusDiv.className = 'status error';
+                        statusDiv.textContent = '✕ ' + state.message;
+                        btn.textContent = '⬇ Build Team Data';
+                        btn.disabled = false;
+                    }
+                })
+                .catch(() => setTimeout(() => pollBuildTeams(btn, statusDiv), 1000));
+        }
 
         // ── CLEAR SCHEDULE ──
         document.getElementById('clearScheduleBtn').addEventListener('click', function () {

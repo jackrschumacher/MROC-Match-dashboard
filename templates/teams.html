@@ -190,9 +190,11 @@
             background: var(--bg-surface);
             border: 1px solid var(--border-subtle);
             border-radius: 6px;
-            overflow: hidden;
+            overflow-x: auto;
             box-shadow: var(--shadow);
         }
+        .table-wrap::-webkit-scrollbar { height: 4px; }
+        .table-wrap::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 2px; }
 
         table {
             width: 100%;
